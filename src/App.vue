@@ -1,0 +1,124 @@
+<script setup lang="ts">
+import portraitUrl from './assets/portrait.png'
+import qrCodeUrl from './assets/qrcode.png'
+import { profile } from './data/profile'
+
+const printResume = (): void => {
+  window.print()
+}
+</script>
+
+<template>
+<nav class="toolbar" aria-label="简历操作"><span>{{ profile.name }} · 个人简历</span><button type="button" @click="printResume">打印 / 保存 PDF</button></nav>
+  <main aria-label="莫晓诗个人简历">
+    <article class="page page-one" aria-label="简历第 1 页">
+      <header>
+        <div class="identity">
+          <div class="identity-text">
+            <div class="identity-line"><span>姓名：{{ profile.name }}</span><span>年龄：{{ profile.age }} 岁</span></div>
+            <div class="identity-line contact-line"><span>手机：<a :href="`tel:${profile.phone}`">{{ profile.phone }}</a></span><span>邮箱：<a :href="`mailto:${profile.email}`">{{ profile.email }}</a></span></div>
+            <p>求职意向：{{ profile.jobIntention }}</p>
+          </div>
+          <img class="portrait" :src="portraitUrl" :alt="`${profile.name}证件照`">
+        </div>
+        <div class="education"><span>2023.09-2027.07</span><span>汕头大学（广东省重点大学）</span><span>计算机科学与技术 / 大四本科</span></div>
+      </header>
+      <section class="summary" aria-labelledby="summary-title">
+        <h2 id="summary-title"><span>个人简历</span></h2>
+        <p>专注 LLM 应用与 Multi-Agent 系统开发，做过从 Agent 工作流设计、RAG 记忆、结构化输出到前后端落地的完整项目：基于 LangGraph 的多智能体剧情平台（GitHub 公开）、大模型驱动的电路调试 Agent（论文投稿中）；有 AI 应用实习经历，参与知识图谱 + Qwen 大模型的工序生成系统开发与部署</p>
+        <p><strong>竞赛经历：</strong>全国大学生数学建模竞赛（国二）、第十六届蓝桥杯 C/C++程序设计比赛广东省赛区（省二）、连续三年获得创新人才免学费奖学金</p>
+        <p><strong>修读课程：</strong>数据结构、操作系统、计算机网络、数据库、大语言模型智能体理论与实践等（均取得 90+）</p>
+      </section>
+      <section aria-labelledby="internship-title">
+        <h2 id="internship-title"><span>实习经历</span></h2>
+        <div class="job-heading"><time>2026.08-至今</time><strong>华南虎科技有限公司 | AI 前端工程师实习生</strong></div>
+        <div class="intern-project">
+          <p class="project-label"><strong>参与项目：</strong>春晓服装工序生成系统</p>
+          <p class="project-description"><strong>项目描述：</strong>面向服装生产场景，对原始工艺语料进行清洗、拆分和知识化处理，并结合知识图谱与大模型能力，辅助生成结构清晰、符合业务规范的服装工序</p>
+          <p class="responsibilities"><strong>负责工作：</strong></p>
+          <ul>
+            <li>负责<strong>原始工艺语料结构化处理：</strong>设计「规则词表匹配 + MacBERT span 拆分」双路方案（7 标签、自建 792 行语料微调），配套 span 清洗规则使幻影 unit 303→0、碎片 unit 907→3；实体链接率 70%→98.90%</li>
+            <li>参与<strong>服装特征知识图谱建设：</strong>组织部位/工艺/上下文三维实体关系，2155 实体 / 185 部位 / 47 工艺 / 2830 小包节点；定位并修复导致主表工艺被整批跳过的静默 bug，以规则路径重建 KG，小包覆盖率 99.26%，四指标全部达标（98.19 / 6.53 / 8.88 / 81.02）</li>
+            <li>负责 <strong>Qwen 大模型接入与 Prompt 工程：</strong>解决思考模式致请求 57.1s（优化至 2.1s）、幻觉 SOP、间歇 500 三类问题；设计两段式缓存链路与保真校验。全量评测判定净负未上生产，并定位根因为精确匹配退化 7.8pp，v2 迭代后精确匹配 23.3%→35.2%</li>
+          </ul>
+        </div>
+        <div class="intern-project">
+          <p class="project-label"><strong>参与项目：</strong>陪伴型机器人 uni-app 小程序</p>
+          <p class="project-description"><strong>项目描述：</strong>基于 uni-app 开发的陪伴型机器人配套微信小程序，为用户提供机器人相关功能的移动端交互入口</p>
+          <p class="responsibilities"><strong>负责工作：</strong></p>
+          <ul>
+            <li>协助完成小程序前端功能开发，根据业务需求进行页面实现与交互调整，并配合后端完成接口联调及数据展示</li>
+            <li>参与微信小程序的测试与版本发布，跟进联调和上线过程中出现的问题，积累了 uni-app 跨端开发及项目交付经验</li>
+          </ul>
+        </div>
+        <div class="intern-project">
+          <p class="project-label"><strong>参与项目：</strong>广州博物馆 unity 交互游戏</p>
+          <p class="responsibilities"><strong>负责工作：</strong></p>
+          <ul>
+            <li><strong>多端数据同步与并发优化：</strong>针对手机端与电脑端信息不同步问题，排查并定位到后端并行/串行逻辑处理不当及字段判断存在漏条件。通过重构相关逻辑，修复了数据同步 Bug，提升了多端交互的稳定性</li>
+            <li><strong>硬件接口维护与重构：</strong>修复打印机调用功能被覆盖的问题，对调用逻辑进行解耦与重构，确保打印任务能够稳定触发，保障了线下场景的正常运行</li>
+          </ul>
+        </div>
+      </section>
+      <section aria-labelledby="projects-title">
+        <h2 id="projects-title" class="projects-title"><span>项目经历</span></h2>
+        <div class="project-heading circuit-heading"><time>2025.10-2026.09</time><strong>大模型驱动的交互式 Arduino 电路调试助手(Circuit Muse) 【投稿中 代码不公开】</strong></div>
+        <p><strong>项目背景：</strong>面向电子信息专业学生构建 AI 电路调试 Agent，将自然语言需求、电路结构分析、故障诊断、知识检索与硬件调试结合，实现从电路生成到故障定位和修复建议的智能辅助</p>
+        <p class="stack">技术栈：React | JavaScript | TypeScript | AntV X6 | Monaco Editor | Express | OpenAI API</p>
+        <p class="core-label"><strong>核心工作：</strong></p>
+        <ul><li><strong>Agent Workflow：</strong>设计多阶段电路调试 Agent，将需求解析、电路结构理解、故障分析与修复建议拆分为独立推理节点，通过结构化上下文在节点间传递电路状态</li></ul>
+      </section>
+    </article>
+    <article class="page page-two" aria-label="简历第 2 页">
+      <section aria-label="电路调试助手核心工作（续）">
+        <ul>
+          <li><strong>LLM 应用架构：</strong>基于 OpenAI API 实现多轮对话与上下文管理，设计 Prompt Template、结构化输出协议及异常处理机制，并实现 Token Streaming 与 Markdown 实时渲染</li>
+          <li><strong>Structured Output：</strong>建立自然语言 → 电路 Schema → 可视化模型的数据转换链路，将 LLM 输出约束为标准化 Circuit JSON，并驱动 AntV X6 自动生成电路图</li>
+          <li><strong>Deterministic + LLM：</strong>将图拓扑分析与 LLM 推理结合，实现浮空引脚、短路、开路、引脚越界等确定性故障检测，并通过 RAG 获取相关知识生成修复建议</li>
+          <li><strong>实时交互：</strong>基于 WebSerial 建立浏览器与硬件设备通信链路，实现元器件参数在线调整、LCD/OLED/点阵屏实时预览及设计参数同步</li>
+        </ul>
+      </section>
+      <section class="story" aria-label="互动式剧情生成游戏">
+        <img class="qrcode" :src="qrCodeUrl" alt="原简历中的项目二维码">
+        <div class="project-heading story-heading"><time>2026.01-2026.06</time><strong>基于多智能体的互动式剧情生成游戏（Story Weaver）</strong></div>
+        <p class="github"><strong>GitHub 链接：</strong><a href="https://github.com/xiaoxiao189643/StoryWeaver.git" target="_blank" rel="noopener noreferrer">https://github.com/xiaoxiao189643/StoryWeaver.git</a></p>
+        <p class="project-description"><strong>项目背景：</strong>面向 Multi-Agent 的非线性叙事模拟平台，通过多个具备独立人格、目标、情绪和记忆的 Agent 驱动剧情实时演化，并提供 Agent 状态可视化及剧情调试能力</p>
+        <p class="stack">技术栈：LangGraph | LangChain | DeepSeek API | Python | FastAPI | WebSocket | ChromaDB | PostgreSQL | React | TypeScript | PixiJS</p>
+        <ul>
+          <li><strong>Multi-Agent Runtime：</strong>基于 LangGraph 构建多 Agent 推理工作流，将 NPC Agent 抽象为 Observe → Think → Act 执行链，实现角色自主决策与世界状态交互</li>
+          <li><strong>Agent State：</strong>设计统一 Agent State，维护人格、情绪、目标、关系及长期记忆等状态，通过上下文动态注入机制控制 Agent 的认知边界与角色一致性</li>
+          <li><strong>Memory / RAG：</strong>基于 ChromaDB 实现角色长期记忆检索，根据当前场景动态召回历史事件，并结合角色身份进行 Context Injection，增强长期剧情连续性</li>
+          <li><strong>World State：</strong>设计 Intent → Resolution → Command 状态流，将玩家/NPC 的意图解析与世界状态更新解耦，统一 AI 行为与游戏状态的执行接口</li>
+          <li><strong>Event-driven Architecture：</strong>基于 WebSocket + EventBus 构建实时事件通信机制，实现 LLM Token Streaming、Agent 状态变化、剧情事件及玩家干预的实时同步</li>
+        </ul>
+      </section>
+      <section class="skills" aria-labelledby="skills-title">
+        <h2 id="skills-title" class="skills-title"><span>专业技能</span></h2>
+        <h3>Agent 开发:</h3>
+        <ul>
+          <li>掌握 OpenAI、DeepSeek 等 LLM API 开发，具备 Prompt Engineering、Structured Output、多轮对话、上下文管理、流式输出等 LLM 应用开发经验</li>
+          <li>掌握 LangChain、LangGraph，能够设计并实现 Agent Workflow、状态管理、任务编排、工具调用及 Multi-Agent 协作流程</li>
+          <li>掌握 RAG 应用开发，具备向量检索、长期记忆、上下文注入及知识隔离等实践经验</li>
+        </ul>
+        <h3>Agent 系统工程:</h3>
+        <ul>
+          <li>熟悉 Agent State / Memory / Workflow / Tool / Event 等核心机制，能够将复杂任务拆分为可编排、可观测的 Agent 工作流</li>
+          <li>具备 Multi-Agent 系统开发经验，能够处理 Agent 间状态同步、角色约束、上下文隔离及长流程一致性问题</li>
+          <li>具备 LLM 输出结构化、异常处理、实时 Token Streaming 及 WebSocket 事件驱动开发经验</li>
+        </ul>
+        <h3>后端开发:</h3>
+        <ul>
+          <li>掌握 Python、FastAPI，熟悉 RESTful API 设计及异步服务开发</li>
+          <li>熟悉 Node.js、Express，具备前后端接口设计、数据交互及实时通信开发经验</li>
+          <li>了解 PostgreSQL、ChromaDB 等关系型数据库与向量数据库</li>
+        </ul>
+        <h3>前端开发:</h3>
+        <ul>
+          <li>掌握 React、TypeScript，熟悉 Vite、WebSocket、Axios 等前端工程化及实时交互开发</li>
+          <li>熟悉 Vue3、Composition API，具备 AI 应用可视化及复杂交互系统开发经验</li>
+          <li>熟悉 Git，具备独立完成 AI 应用前后端开发与联调能力</li>
+        </ul>
+      </section>
+    </article>
+  </main>
+</template>
