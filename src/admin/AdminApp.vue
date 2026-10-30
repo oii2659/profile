@@ -73,8 +73,8 @@ async function logout() {
 <template>
   <div class="admin-app">
     <header class="admin-topbar">
-      <a href="#" class="admin-brand">M / 简历工作台</a>
-      <div class="admin-top-actions"><a href="#" target="_blank" rel="noopener">查看公开网站 ↗</a><span v-if="account">{{ account }}</span><button v-if="account" @click="logout">退出登录</button></div>
+      <a href="/" class="admin-brand">M / 简历工作台</a>
+      <div class="admin-top-actions"><a href="/" target="_blank" rel="noopener">查看公开网站 ↗</a><span v-if="account">{{ account }}</span><button v-if="account" @click="logout">退出登录</button></div>
     </header>
     <main v-if="!authorized" class="admin-login">
       <p class="admin-kicker">PRIVATE WORKSPACE</p><h1>管理你的个人主页</h1>

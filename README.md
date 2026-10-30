@@ -32,13 +32,13 @@ npm run preview
 - `src/style.css`、`src/reading.css`、`src/scan.css`：打印、网页及摘要布局样式。
 - `src/assets/`：本地字体和项目二维码。
 
-构建产物 `dist/`、测试输出 `.artifacts/` 和 `test-results/` 可重新生成，不提交到仓库。目录定位和详情展开不改变公开页面地址；旧链接的版本参数与章节锚点会自动清理，后台继续使用 `/#/admin`。
+构建产物 `dist/`、测试输出 `.artifacts/` 和 `test-results/` 可重新生成，不提交到仓库。目录定位和详情展开不改变公开页面地址；旧链接的版本参数与章节锚点会自动清理，后台使用 `/admin`，旧的 `/#/admin` 链接会自动切换到新地址。
 
 点击“打印 / 保存 PDF”，纸张选择 A4、缩放 100%，关闭浏览器页眉和页脚即可得到两页简历。
 
 ## 在线站长后台
 
-访问网站的 `#/admin`，或点击页面底部“站长管理”。使用 Supabase Auth 邮箱和密码登录，仅 `site_admins` 名单中的账号有管理权限。
+访问网站的 `/admin`，或点击页面底部“站长管理”。使用 Supabase Auth 邮箱和密码登录，仅 `site_admins` 名单中的账号有管理权限。
 
 - 简历编辑：类似 Word 的富文本正文、个人信息表单、两页预览、撤销/重做、本机草稿恢复与下载。
 - 保存并发布：受保护的 Supabase Edge Function 更新 GitHub 的 `src/data/resume.json`，生成提交记录，再由 GitHub Actions 部署。网站更新需要等待部署完成，本地文件需要 `git pull` 才能同步。
@@ -98,7 +98,7 @@ npm run build
 2. 在仓库 Settings → Pages → Custom domain 填入你选择的完整域名并保存。
 3. 在注册商的 DNS 管理中，为 `www` 或 `resume` 添加 CNAME，目标为 **`oii2659.github.io`**，不带 `https://` 或 `/profile/`。若要用根域名，按 GitHub 官方文档配置 A/AAAA 或受支持的 ALIAS/ANAME 记录。
 4. 等待 GitHub DNS 检查和证书签发完成，再启用 Enforce HTTPS。使用 Cloudflare DNS 时，初次配置可先保持 DNS only，避免代理干扰验证。
-5. 此仓库使用自定义 Actions 工作流部署，在仓库 Pages 设置绑定域名即可，不依赖构建产物中的 CNAME 文件。现有 Vite `base: './'` 可兼容默认项目路径和自定义域名。
+5. 此仓库使用自定义 Actions 工作流部署，在仓库 Pages 设置绑定域名即可，不依赖构建产物中的 CNAME 文件。Vite 使用 `base: '/'` 服务于自定义域名根路径，构建时生成首页及 `admin/index.html`，确保后台直接访问和刷新正常。
 
 更换前端域名时，需同步更新保存接口的 `ALLOWED_ORIGINS`，并核对 Supabase Auth 的 Site URL 和允许回调地址；Supabase 项目 URL、数据库和留言无需迁移。
 

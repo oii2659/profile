@@ -7,7 +7,9 @@ import { publishedResume } from './lib/resume'
 import { buildReadingResume } from './lib/reading'
 import { recordVisit } from './lib/analytics'
 const AdminApp = defineAsyncComponent(() => import('./admin/AdminApp.vue'))
-const isAdmin = ref(window.location.hash.startsWith('#/admin'))
+const adminPath = '/admin'
+const matchesAdminRoute = () => /^\/admin(?:\/|\/index\.html)?$/.test(window.location.pathname) || window.location.hash === '#/admin'
+const isAdmin = ref(matchesAdminRoute())
 const resumeNavigation = buildReadingResume(publishedResume).sections
 const readingView = ref<InstanceType<typeof ReadingResume>>()
 function scrollToSection(id: string) {
@@ -19,7 +21,8 @@ async function cleanPublicUrl() {
   const url = new URL(window.location.href)
   const legacyTarget = url.hash.slice(1)
   url.searchParams.delete('v')
-  if (!isAdmin.value) url.hash = ''
+  if (isAdmin.value) url.pathname = adminPath
+  url.hash = ''
   if (url.href !== window.location.href) window.history.replaceState(window.history.state, '', url)
   if (!isAdmin.value && legacyTarget) {
     await nextTick()
@@ -29,16 +32,20 @@ async function cleanPublicUrl() {
 }
 function routeChanged() {
   const wasAdmin = isAdmin.value
-  isAdmin.value = window.location.hash.startsWith('#/admin')
+  isAdmin.value = matchesAdminRoute()
   void cleanPublicUrl()
   if (wasAdmin && !isAdmin.value) void recordVisit()
 }
 onMounted(() => {
   window.addEventListener('hashchange', routeChanged)
+  window.addEventListener('popstate', routeChanged)
   void cleanPublicUrl()
   if (!isAdmin.value) void recordVisit()
 })
-onBeforeUnmount(() => window.removeEventListener('hashchange', routeChanged))
+onBeforeUnmount(() => {
+  window.removeEventListener('hashchange', routeChanged)
+  window.removeEventListener('popstate', routeChanged)
+})
 const printResume = () => window.print()
 </script>
 
@@ -71,7 +78,7 @@ const printResume = () => window.print()
     </div>
     <footer class="site-footer">
       <p v-if="recordVisit.enabled">本站记录匿名访问统计：时间、页面、来源网站和设备类型，不收集姓名或 IP。</p>
-      <a href="#/admin">站长管理</a>
+      <a :href="adminPath">站长管理</a>
     </footer>
   </div>
 </template>

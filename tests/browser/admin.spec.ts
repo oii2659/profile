@@ -58,7 +58,7 @@ async function setup(page: Page, authorized = true) {
   return state
 }
 async function login(page: Page) {
-  await page.goto('/#/admin')
+  await page.goto('/admin')
   await page.getByLabel('管理员邮箱').fill('owner@example.com')
   await page.getByLabel('密码', { exact: true }).fill('test-password')
   await page.getByRole('button', { name: '登录工作台', exact: true }).click()
@@ -75,7 +75,7 @@ test('public resume preserves content, print layout and minimal anonymous analyt
   }
   await expect.poll(() => state.visits.length).toBe(1)
   expect(Object.keys(state.visits[0]!).sort()).toEqual(['device_type', 'event_id', 'page_path', 'referrer_host', 'session_id'])
-  await page.goto('/#/admin')
+  await page.goto('/admin')
   await expect(page.getByLabel('管理员邮箱')).toBeVisible()
   expect(state.visits.length).toBe(1)
   await page.goto('/')
@@ -130,7 +130,7 @@ test('old public links become clean URLs while admin routing remains available',
   await expect(page.getByLabel('管理员邮箱')).toBeVisible()
   await page.reload()
   await expect(page.getByLabel('管理员邮箱')).toBeVisible()
-  await expect(page).toHaveURL('http://127.0.0.1:5180/#/admin')
+  await expect(page).toHaveURL('http://127.0.0.1:5180/admin')
 })
 
 test('simple guestbook retains failed drafts, publishes and loads additional comments', async ({ page }) => {
@@ -152,6 +152,31 @@ test('simple guestbook retains failed drafts, publishes and loads additional com
   await expect(draft).toHaveValue('')
   await expect(page.locator('.guestbook-message').first()).toContainText('希望了解更多项目细节。')
   await expect(page.getByRole('button', { name: /秒后可发布/ })).toBeDisabled()
+  expect(state.exceptions).toEqual([])
+})
+
+test('admin paths and legacy bookmarks open the login page without counting public visits', async ({ page }) => {
+  const state = await setup(page)
+  for (const path of ['/admin', '/admin/', '/admin/index.html', '/#/admin']) {
+    await page.goto(path)
+    await expect(page.getByLabel('管理员邮箱')).toBeVisible()
+    await expect(page).toHaveURL('http://127.0.0.1:5180/admin')
+    await page.reload()
+    await expect(page.getByLabel('管理员邮箱')).toBeVisible()
+  }
+  expect(state.visits).toHaveLength(0)
+  const popupPromise = page.waitForEvent('popup')
+  await page.getByRole('link', { name: '查看公开网站' }).click()
+  const popup = await popupPromise
+  await expect(popup).toHaveURL('http://127.0.0.1:5180/')
+  await popup.close()
+  await page.getByRole('link', { name: 'M / 简历工作台' }).click()
+  await expect(page.locator('.scan-resume')).toBeVisible()
+  await expect(page).toHaveURL('http://127.0.0.1:5180/')
+  await page.goBack()
+  await expect(page.getByLabel('管理员邮箱')).toBeVisible()
+  await page.goForward()
+  await expect(page.locator('.scan-resume')).toBeVisible()
   expect(state.exceptions).toEqual([])
 })
 
