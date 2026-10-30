@@ -10,7 +10,7 @@ async function setup(page: Page, authorized = true) {
   const state = {
     document: structuredClone(source), sha: initialSha,
     posted: null as null | { document: typeof source; expectedSha: string },
-    conflict: false, sourceUnavailable: false,
+    conflict: false, sourceUnavailable: false, sendFailure: false,
     visits: [] as Record<string, unknown>[],
     messages: [{ id: 1, content: '很喜欢你的项目，祝求职顺利！', created_at: '2026-10-30T01:00:00Z', hidden: false }, { id: 2, content: '一条已隐藏的留言', created_at: '2026-10-29T01:00:00Z', hidden: true }],
     exceptions: [] as string[],
@@ -38,10 +38,16 @@ async function setup(page: Page, authorized = true) {
       return route.fulfill({ json: { document: state.document, sha: state.sha, commitUrl: 'https://github.com/owner/profile/commit/123', actionsUrl: 'https://github.com/owner/profile/actions' } })
     }
     if (url.pathname === '/rest/v1/message') {
+      if (method === 'POST') {
+        if (state.sendFailure) return route.fulfill({ status: 503, json: { message: 'Unavailable' } })
+        state.messages.unshift({ id: state.messages.length + 1, content: request.postDataJSON().content, created_at: new Date().toISOString(), hidden: false })
+        return route.fulfill({ status: 201 })
+      }
       if (method === 'PATCH') { const row = state.messages.find(row => String(row.id) === url.searchParams.get('id')?.slice(3))!; row.hidden = request.postDataJSON().hidden; return route.fulfill({ json: [{ id: row.id }] }) }
       if (method === 'DELETE') { const id = Number(url.searchParams.get('id')?.slice(3)); state.messages = state.messages.filter(row => row.id !== id); return route.fulfill({ json: [{ id }] }) }
       const hidden = url.searchParams.get('hidden')
-      const rows = state.messages.filter(row => !hidden || row.hidden === (hidden === 'eq.true'))
+      const isOwner = request.headers().authorization === 'Bearer ' + token
+      const rows = state.messages.filter(row => (isOwner || !row.hidden) && (!hidden || row.hidden === (hidden === 'eq.true'))).slice(0, Number(url.searchParams.get('limit') || 100))
       return route.fulfill({ json: rows, headers: { 'content-range': '0-' + (rows.length-1) + '/' + rows.length } })
     }
     if (url.pathname === '/rest/v1/rpc/record_page_view') { state.visits.push(request.postDataJSON()); return route.fulfill({ status: 204 }) }
@@ -88,6 +94,45 @@ test('non-administrator login never opens the editor', async ({ page }) => {
   await expect(page.getByRole('alert')).toContainText('没有站长权限')
   await expect(page.getByRole('button', { name: '保存并发布' })).toHaveCount(0)
   expect(state.posted).toBeNull()
+})
+
+test('reading layout navigates without recording extra visits and fits small screens', async ({ page }) => {
+  const state = await setup(page)
+  await page.goto('/')
+  await expect.poll(() => state.visits.length).toBe(1)
+  await expect(page.locator('.reading-sidebar')).toBeVisible()
+  await expect(page.locator('.portrait')).toHaveCount(0)
+  await page.getByRole('navigation', { name: '简历目录' }).getByRole('link', { name: '项目经历' }).click()
+  expect(await page.locator('#resume-section-3').evaluate(el => Math.abs(el.getBoundingClientRect().top - 24)) < 2).toBe(true)
+  expect(state.visits).toHaveLength(1)
+  for (const width of [900, 768, 390, 320]) {
+    await page.setViewportSize({ width, height: 844 })
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+    await expect(page.locator('.reading-sidebar')).toBeHidden()
+  }
+  expect(state.exceptions).toEqual([])
+})
+
+test('simple guestbook retains failed drafts, publishes and loads additional comments', async ({ page }) => {
+  const state = await setup(page)
+  state.messages = Array.from({ length: 10 }, (_, i) => ({ id: i + 1, content: '留言 ' + (i + 1), created_at: '2026-10-30T01:00:00Z', hidden: false }))
+  await page.goto('/')
+  await expect(page.locator('.guestbook-message')).toHaveCount(8)
+  await page.getByRole('button', { name: '查看更多留言' }).click()
+  await expect(page.locator('.guestbook-message')).toHaveCount(10)
+  const draft = page.getByRole('textbox', { name: '你的留言' })
+  await draft.fill('希望了解更多项目细节。')
+  state.sendFailure = true
+  await page.getByRole('button', { name: '发布留言', exact: true }).click()
+  await expect(page.getByRole('alert')).toContainText('内容已保留')
+  await expect(draft).toHaveValue('希望了解更多项目细节。')
+  state.sendFailure = false
+  await page.getByRole('button', { name: '发布留言', exact: true }).click()
+  await expect(page.getByRole('status')).toContainText('留言已发布。')
+  await expect(draft).toHaveValue('')
+  await expect(page.locator('.guestbook-message').first()).toContainText('希望了解更多项目细节。')
+  await expect(page.getByRole('button', { name: /秒后可发布/ })).toBeDisabled()
+  expect(state.exceptions).toEqual([])
 })
 
 test('editing preserves existing content, posts source version, and distinguishes commit from deployment', async ({ page }) => {

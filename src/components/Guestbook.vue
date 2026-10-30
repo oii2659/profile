@@ -74,7 +74,7 @@ async function submitMessage() {
     if (error) throw error
     if (disposed) return
     draft.value = ''
-    feedback.value = '留言已发布，谢谢你留下的想法。'
+    feedback.value = '留言已发布。'
     cooldown.value = 30
     timer = setInterval(() => {
       cooldown.value = Math.max(0, cooldown.value - 1)
@@ -118,62 +118,39 @@ onBeforeUnmount(() => {
 
 <template>
   <section id="guestbook" class="guestbook" aria-labelledby="guestbook-title">
-    <header class="guestbook-heading">
-      <div>
-        <p class="guestbook-eyebrow">很高兴在这里遇见你</p>
-        <h2 id="guestbook-title">留下一点想法</h2>
-        <p class="guestbook-intro">关于项目的建议、技术交流，或是一句简单的问候，都很欢迎。</p>
-      </div>
-      <span class="guestbook-mark" aria-hidden="true">“</span>
-    </header>
-
-    <div class="guestbook-contact">
-      <div><strong>聊聊工作机会或合作？</strong><p>可以直接发邮件给我，方便进一步沟通。</p></div>
-      <a :href="`mailto:${email}`">邮件联系 <span aria-hidden="true">↗</span></a>
-    </div>
-
-    <p v-if="!supabase" class="guestbook-state" role="status">留言板暂未开放，欢迎通过邮件联系我。</p>
+    <header class="guestbook-heading"><h2 id="guestbook-title">留言</h2><span>匿名公开</span></header>
+    <p v-if="!supabase" class="guestbook-state" role="status">留言暂未开放，可<a :href="'mailto:' + email">通过邮件联系</a>。</p>
     <form v-else class="guestbook-form" @submit.prevent="submitMessage">
-      <label for="guestbook-message">你的留言 <span>无需登录 · 匿名公开</span></label>
-      <textarea id="guestbook-message" v-model="draft" :disabled="sending" rows="4"
-        placeholder="看完简历，有什么想对我说的？" aria-describedby="guestbook-privacy guestbook-count"
+      <label for="guestbook-message" class="visually-hidden">你的留言</label>
+      <textarea id="guestbook-message" v-model="draft" :disabled="sending" rows="3"
+        placeholder="写下你的留言…" aria-describedby="guestbook-privacy guestbook-count"
         :aria-invalid="characterCount > MAX_LENGTH" required />
       <div class="guestbook-compose-footer">
-        <p id="guestbook-privacy">留言对所有人可见，请勿填写手机号等私人信息。</p>
+        <p id="guestbook-privacy">公开留言，请勿填写私人信息。</p>
         <span id="guestbook-count" :class="{ 'guestbook-over-limit': characterCount > MAX_LENGTH }">{{ characterCount }} / {{ MAX_LENGTH }}</span>
-      </div>
-      <div class="guestbook-submit-row">
-        <p class="guestbook-note">谢谢你的认真阅读与善意交流。</p>
         <button type="submit" class="guestbook-submit" :disabled="!canSend">
-          {{ sending ? '正在发布…' : cooldown > 0 ? `${cooldown} 秒后可再次留言` : '发布留言 ↗' }}
+          {{ sending ? '发布中…' : cooldown > 0 ? cooldown + ' 秒后可发布' : '发布留言' }}
         </button>
       </div>
       <p v-if="feedback" class="guestbook-success" role="status">{{ feedback }}</p>
       <p v-if="sendError" class="guestbook-error" role="alert">{{ sendError }}</p>
     </form>
-
     <div v-if="supabase" class="guestbook-conversation">
       <div class="guestbook-list-heading">
-        <h3>访客的声音</h3>
-        <div><span class="guestbook-live" :class="{ 'is-live': live }">{{ live ? '已连接' : '可手动刷新' }}</span><button type="button" :disabled="loading" @click="fetchMessages()">{{ loading ? '加载中…' : '刷新' }}</button></div>
+        <h3>全部留言</h3>
+        <button type="button" :disabled="loading" @click="fetchMessages()">{{ loading ? '加载中…' : '刷新' }}</button>
       </div>
       <button v-if="updates" type="button" class="guestbook-update" :disabled="loading" @click="fetchMessages()">留言有更新，点击查看</button>
       <div v-if="loadError" class="guestbook-error" role="alert">{{ loadError }} <button type="button" :disabled="loading" @click="fetchMessages()">重试</button></div>
-      <p v-if="loading && !loaded" class="guestbook-state" role="status">正在读取大家的留言…</p>
-      <div v-else-if="loaded && !messages.length && !loadError" class="guestbook-state">
-        <span aria-hidden="true">✳</span><p>这里还很安静，来留下第一声问候吧。</p>
-      </div>
+      <p v-if="loading && !loaded" class="guestbook-state" role="status">正在加载留言…</p>
+      <p v-else-if="loaded && !messages.length && !loadError" class="guestbook-state">暂无留言</p>
       <ul class="guestbook-list" :aria-busy="loading">
         <li v-for="message in messages" :key="message.id" class="guestbook-message">
-          <span class="guestbook-avatar" aria-hidden="true">客</span>
-          <div class="guestbook-message-body">
-            <div class="guestbook-message-meta"><strong>一位访客</strong><time :datetime="message.created_at">{{ formatDate(message.created_at) }}</time></div>
-            <p>{{ message.content }}</p>
-          </div>
+          <div class="guestbook-message-meta"><strong>匿名访客</strong><time :datetime="message.created_at">{{ formatDate(message.created_at) }}</time></div>
+          <p>{{ message.content }}</p>
         </li>
       </ul>
       <button v-if="hasMore" type="button" class="guestbook-more" :disabled="loading" @click="fetchMessages(true)">{{ loading ? '加载中…' : '查看更多留言' }}</button>
-      <p v-else-if="messages.length" class="guestbook-end">每一条留言，都很珍贵。</p>
     </div>
   </section>
 </template>
