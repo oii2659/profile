@@ -7,13 +7,23 @@
     "dev": "vite --host 127.0.0.1",
     "type-check": "vue-tsc --noEmit",
     "build": "vue-tsc --noEmit && vite build",
-    "preview": "vite preview --host 127.0.0.1"
+    "preview": "vite preview --host 127.0.0.1",
+    "test:db": "node --test tests/database.test.mjs",
+    "test:browser": "playwright test",
+    "test:functions": "npx --yes --package=deno deno test --config supabase/functions/deno.json --allow-env --allow-read --allow-sys supabase/functions/_shared/resume-handler_test.ts",
+    "check:functions": "npx --yes --package=deno deno check --config supabase/functions/deno.json supabase/functions/resume-source/index.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.118.0",
+    "@tiptap/core": "^3.32.1",
+    "@tiptap/starter-kit": "^3.32.1",
+    "@tiptap/vue-3": "^3.32.1",
+    "dompurify": "^3.4.17",
     "vue": "^3.5.0"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.13",
+    "@playwright/test": "^1.64.1",
     "@vitejs/plugin-vue": "^6.0.0",
     "typescript": "~5.9.3",
     "vite": "^7.0.0",

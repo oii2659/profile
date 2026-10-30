@@ -1,0 +1,6 @@
+project_id = "profile"
+
+[functions.resume-source]
+# Authentication is enforced inside the function with auth.getUser + site_admins.
+# This supports both legacy anon keys and current publishable keys.
+verify_jwt = false
