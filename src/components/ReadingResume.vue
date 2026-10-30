@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import { buildReadingResume } from '../lib/reading'
 import type { ResumeDocument } from '../lib/resume'
 
@@ -23,9 +23,7 @@ async function reveal(id: string) {
   await nextTick()
   root.value?.querySelector(`#${id}`)?.scrollIntoView({ block: 'start' })
 }
-const revealHash = () => reveal(window.location.hash.slice(1))
-onMounted(() => { window.addEventListener('hashchange', revealHash); void revealHash() })
-onBeforeUnmount(() => window.removeEventListener('hashchange', revealHash))
+defineExpose({ reveal })
 </script>
 
 <template>
@@ -37,11 +35,6 @@ onBeforeUnmount(() => window.removeEventListener('hashchange', revealHash))
       <p class="scan-intro">{{ model.introduction }}</p>
       <div class="scan-education"><span>{{ document.education.school }}</span><span>{{ document.education.degree }}</span><span>{{ document.education.period }}</span></div>
       <div class="scan-contact"><a :href="'mailto:' + document.profile.email">{{ document.profile.email }}</a><a :href="'tel:' + document.profile.phone">{{ document.profile.phone }}</a></div>
-      <div v-if="model.facts.length" class="scan-facts" aria-label="代表成果">
-        <a v-for="fact in model.facts" :key="fact.label" :href="'#' + fact.target" @click="reveal(fact.target)">
-          <span>{{ fact.label }}</span><strong>{{ fact.value }}</strong><small>{{ fact.context }} <span aria-hidden="true">↗</span></small>
-        </a>
-      </div>
     </header>
 
     <div class="scan-controls"><span>经历概览 · 展开可查看完整内容</span><button type="button" @click="toggleAll">{{ allExpanded ? '收起全部' : '展开全部' }}</button></div>

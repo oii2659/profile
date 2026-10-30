@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineAsyncComponent, onBeforeUnmount, onMounted, ref } from 'vue'
+import { defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import Guestbook from './components/Guestbook.vue'
 import ResumeView from './components/ResumeView.vue'
 import ReadingResume from './components/ReadingResume.vue'
@@ -9,13 +9,33 @@ import { recordVisit } from './lib/analytics'
 const AdminApp = defineAsyncComponent(() => import('./admin/AdminApp.vue'))
 const isAdmin = ref(window.location.hash.startsWith('#/admin'))
 const resumeNavigation = buildReadingResume(publishedResume).sections
+const readingView = ref<InstanceType<typeof ReadingResume>>()
+function scrollToSection(id: string) {
+  const target = document.getElementById(id)
+  target?.scrollIntoView({ block: 'start' })
+  if (target) { target.setAttribute('tabindex', '-1'); target.focus({ preventScroll: true }) }
+}
+async function cleanPublicUrl() {
+  const url = new URL(window.location.href)
+  const legacyTarget = url.hash.slice(1)
+  url.searchParams.delete('v')
+  if (!isAdmin.value) url.hash = ''
+  if (url.href !== window.location.href) window.history.replaceState(window.history.state, '', url)
+  if (!isAdmin.value && legacyTarget) {
+    await nextTick()
+    await readingView.value?.reveal(legacyTarget)
+    scrollToSection(legacyTarget)
+  }
+}
 function routeChanged() {
   const wasAdmin = isAdmin.value
   isAdmin.value = window.location.hash.startsWith('#/admin')
+  void cleanPublicUrl()
   if (wasAdmin && !isAdmin.value) void recordVisit()
 }
 onMounted(() => {
   window.addEventListener('hashchange', routeChanged)
+  void cleanPublicUrl()
   if (!isAdmin.value) void recordVisit()
 })
 onBeforeUnmount(() => window.removeEventListener('hashchange', routeChanged))
@@ -27,19 +47,19 @@ const printResume = () => window.print()
   <div v-else class="public-site">
     <nav class="toolbar" aria-label="简历操作">
       <span>{{ publishedResume.profile.name }} · 个人简历</span>
-      <div class="toolbar-actions"><a href="#guestbook">留言</a><button type="button" @click="printResume">打印 / 保存 PDF</button></div>
+      <div class="toolbar-actions"><button class="section-link" type="button" @click="scrollToSection('guestbook')">留言</button><button type="button" @click="printResume">打印 / 保存 PDF</button></div>
     </nav>
     <div class="reading-layout">
       <div class="reading-column">
-        <ReadingResume :document="publishedResume" />
+        <ReadingResume ref="readingView" :document="publishedResume" />
         <div class="print-resume"><ResumeView :document="publishedResume" /></div>
         <Guestbook :email="publishedResume.profile.email" />
       </div>
       <aside class="reading-sidebar" aria-label="简历导航与联系方式">
         <nav class="reading-directory" aria-label="简历目录">
           <h2>目录</h2>
-          <a v-for="heading in resumeNavigation" :key="heading.id" :href="'#' + heading.id">{{ heading.title }}</a>
-          <a href="#guestbook">留言</a>
+          <button v-for="heading in resumeNavigation" :key="heading.id" type="button" @click="scrollToSection(heading.id)">{{ heading.title }}</button>
+          <button type="button" @click="scrollToSection('guestbook')">留言</button>
         </nav>
         <section class="reading-contact">
           <h2>联系方式</h2>

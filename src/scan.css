@@ -8,13 +8,7 @@
   .scan-intro { margin-top: 10px; color: #56606d; font-size: 14px; }
   .scan-education { display: flex; flex-wrap: wrap; gap: 2px 16px; margin-top: 16px; font-size: 13px; color: #56606d; }
   .scan-contact { display: none; flex-wrap: wrap; gap: 4px 16px; margin-top: 10px; font-size: 13px; }
-  .scan-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 24px; margin-top: 26px; padding: 22px 0; border-top: 1px solid #e7ebef; border-bottom: 1px solid #e7ebef; }
-  .scan-facts > a { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; color: #56606d; font-size: 12px; line-height: 1.7; }
-  .scan-facts > a:hover { text-decoration: none; color: #056de8; }
-  .scan-facts strong { display: block; margin: 8px 0 6px; color: #20242b; font-size: 24px; font-weight: 650; line-height: 1.3; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
-  .scan-facts small { font-size: 11px; color: #68717e; }
-  .scan-facts a:hover strong { color: #056de8; }
-  .scan-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 18px 0 22px; font-size: 12px; color: #68717e; }
+  .scan-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 24px 0 22px; padding-top: 18px; border-top: 1px solid #e7ebef; font-size: 12px; color: #68717e; }
   .scan-controls button { flex-shrink: 0; border: 0; padding: 6px 0 6px 10px; border-radius: 3px; background: transparent; font-size: 13px; color: #056de8; }
   .scan-section + .scan-section { margin-top: 26px; }
   .scan-section > h2 { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 0 0 14px; padding: 0; border: 0; font-size: 20px; line-height: 1.5; scroll-margin-top: 24px; }
@@ -63,10 +57,6 @@
   .scan-resume { padding: 26px 20px; border-left: 0; border-right: 0; border-radius: 0; }
   .scan-header h1 { font-size: 28px; }
   .scan-role { font-size: 16px; }
-  .scan-facts { grid-template-columns: 1fr; gap: 14px; padding: 18px 0; margin-top: 20px; }
-  .scan-facts > a { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; column-gap: 12px; }
-  .scan-facts strong { grid-column: 2; grid-row: 1 / 3; font-size: 21px; margin: 0; }
-  .scan-facts small { grid-column: 1; }
   .scan-controls { align-items: center; margin-bottom: 18px; }
   .scan-section > h2 { font-size: 19px; }
   .scan-skills .scan-items { grid-template-columns: 1fr; }

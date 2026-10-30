@@ -16,7 +16,6 @@ export interface ReadingSection {
   lead: string
   items: ReadingItem[]
 }
-export interface ReadingFact { label: string; value: string; context: string; target: string }
 
 const text = (element?: Element | null) => element?.textContent?.replace(/\s+/g, ' ').trim() ?? ''
 const shorten = (value: string, length: number) => Array.from(value).length > length ? Array.from(value).slice(0, length).join('') + '…' : value
@@ -86,28 +85,6 @@ export function buildReadingResume(resume: ResumeDocument) {
     return section
   })
 
-  const facts: ReadingFact[] = []
-  for (const section of sections) {
-    for (const item of section.items) {
-      const body = document.createElement('div')
-      body.innerHTML = item.html
-      const value = text(body)
-      // Only show measurements when the exact labelled evidence exists in the
-      // current source; a changed or removed statement removes its highlight.
-      const linking = value.match(/实体链接率\s*(\d+(?:\.\d+)?%)\s*→\s*(\d+(?:\.\d+)?%)/)
-      if (linking) facts.push({ label: '实体链接率', value: `${linking[1]} → ${linking[2]}`, context: item.title, target: item.id })
-      else {
-        const current = value.match(/实体链接率(?:达到|为)?\s*(\d+(?:\.\d+)?%)/)
-        if (current) facts.push({ label: '实体链接率', value: current[1]!, context: item.title, target: item.id })
-      }
-      const entities = value.match(/([\d,]+)\s*个特征实体/)
-      if (entities) facts.push({ label: '知识图谱特征实体', value: entities[1]!, context: item.title, target: item.id })
-      const coverage = value.match(/小包覆盖率\s*(\d+(?:\.\d+)?%)/)
-      if (coverage) facts.push({ label: '知识图谱小包覆盖率', value: coverage[1]!, context: item.title, target: item.id })
-      const award = value.match(/全国大学生数学建模竞赛[（(]([^）)]+)[）)]/)
-      if (award) facts.unshift({ label: '全国大学生数学建模竞赛', value: award[1]!, context: '竞赛经历', target: item.id })
-    }
-  }
   const introduction = text(root.querySelector('.summary > p')).split(/[，；。]/)[0] || resume.profile.jobIntention
-  return { sections, facts: facts.slice(0, 3), introduction }
+  return { sections, introduction }
 }

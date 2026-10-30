@@ -10,7 +10,7 @@
   .public-site .toolbar > span { color: #20242b; font-weight: 600; }
   .public-site .toolbar button { border-radius: 3px; padding: 7px 12px; font-size: 13px; }
   .public-site .toolbar-actions { gap: 24px; }
-  .public-site .toolbar-actions > a { color: var(--reading-blue); }
+  .public-site .toolbar .section-link { border: 0; background: transparent; padding: 7px 0; color: var(--reading-blue); }
   .reading-layout { display: grid; grid-template-columns: minmax(0, 820px) 240px; align-items: start; gap: 24px; max-width: 1120px; margin: 0 auto; }
   .reading-column { min-width: 0; }
   .public-site .resume-paper { padding: 38px 42px; background: #fff; border: 1px solid #e3e6ea; border-radius: 3px; }
@@ -47,8 +47,8 @@
   .reading-sidebar { position: sticky; top: 24px; display: grid; gap: 16px; }
   .reading-directory, .reading-contact { padding: 22px 24px; border: 1px solid #e3e6ea; border-radius: 3px; background: #fff; }
   .public-site .reading-sidebar h2 { margin: 0 0 14px; border: 0; font-size: 15px; line-height: 1.5; font-weight: 600; color: #20242b; }
-  .reading-directory a { display: block; padding: 7px 0; color: #555e6b; font-size: 14px; }
-  .reading-directory a:hover { color: var(--reading-blue); }
+  .reading-directory button { width: 100%; text-align: left; border: 0; background: transparent; border-radius: 0; font: inherit; display: block; padding: 7px 0; color: #555e6b; font-size: 14px; }
+  .reading-directory button:hover { color: var(--reading-blue); }
   .reading-contact a { display: block; margin: 7px 0; font-size: 13px; overflow-wrap: anywhere; }
   .reading-contact a:hover { color: var(--reading-blue); }
   .reading-contact p { margin-top: 14px; padding-top: 12px; border-top: 1px solid #edf0f3; font-size: 12px; color: #656e7b; }

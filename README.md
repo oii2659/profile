@@ -1,6 +1,6 @@
 # 莫晓诗个人简历
 
-Vue 3 + TypeScript + Vite 项目，使用 `<script setup lang="ts">`，保留原简历的两页布局、楷体、证件照、二维码、移动端适配和 A4 打印。
+Vue 3 + TypeScript + Vite 简历网站，公开地址为 https://xsmore.cn/ 。网页采用双栏摘要与可展开详情，支持手机阅读和完整 A4 打印。
 
 ## 启动
 
@@ -25,11 +25,14 @@ npm run preview
 ## 编辑
 
 - `src/data/resume.json`：简历正文和个人信息的唯一内容来源，在线后台保存时修改此文件。
-- `src/components/ResumeView.vue`：两页简历的展示结构。
+- `src/components/ReadingResume.vue`、`src/lib/reading.ts`：从正文生成摘要、项目流程和可展开详情。
+- `src/components/ResumeView.vue`：打印简历和后台预览。
 - `src/App.vue`：公开网站、后台入口和打印按钮。
 - `src/admin/`：站长登录、富文本编辑、留言管理、访问统计。
-- `src/style.css`：桌面、移动端及打印样式。
-- `src/assets/`：本地字体、证件照和二维码，不依赖外部 CDN。
+- `src/style.css`、`src/reading.css`、`src/scan.css`：打印、网页及摘要布局样式。
+- `src/assets/`：本地字体和项目二维码。
+
+构建产物 `dist/`、测试输出 `.artifacts/` 和 `test-results/` 可重新生成，不提交到仓库。目录定位和详情展开不改变公开页面地址；旧链接的版本参数与章节锚点会自动清理，后台继续使用 `/#/admin`。
 
 点击“打印 / 保存 PDF”，纸张选择 A4、缩放 100%，关闭浏览器页眉和页脚即可得到两页简历。
 
@@ -85,7 +88,7 @@ npm run build
 
 ## 自定义访问域名
 
-当前部署平台是 **GitHub Pages**，Supabase 是留言板后端。按仓库地址推算，默认网站地址为 `https://oii2659.github.io/profile/`，实际地址以 GitHub 仓库 Settings → Pages 显示为准。
+当前部署平台是 **GitHub Pages**，域名是 `https://xsmore.cn/`。Supabase 提供登录、留言、访问统计及简历发布接口。
 
 域名在域名注册商购买，例如阿里云、腾讯云、Cloudflare Registrar 或 Namecheap；不是在 Supabase 购买。Supabase 的 Custom Domains 是 API 的自定义域名，本项目不需要购买这项功能。
 
@@ -97,6 +100,6 @@ npm run build
 4. 等待 GitHub DNS 检查和证书签发完成，再启用 Enforce HTTPS。使用 Cloudflare DNS 时，初次配置可先保持 DNS only，避免代理干扰验证。
 5. 此仓库使用自定义 Actions 工作流部署，在仓库 Pages 设置绑定域名即可，不依赖构建产物中的 CNAME 文件。现有 Vite `base: './'` 可兼容默认项目路径和自定义域名。
 
-仅更换前端域名无需改动 Supabase URL、数据库或现有留言。如果以后加入 Auth/OAuth 登录，再同步更新 Supabase Auth 的 Site URL、允许回调地址及登录供应商设置。
+更换前端域名时，需同步更新保存接口的 `ALLOWED_ORIGINS`，并核对 Supabase Auth 的 Site URL 和允许回调地址；Supabase 项目 URL、数据库和留言无需迁移。
 
 官方参考：[GitHub 自定义域名](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site)、[验证域名](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/verifying-your-custom-domain-for-github-pages)、[Supabase Custom Domains](https://supabase.com/docs/guides/platform/custom-domains)。

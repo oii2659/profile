@@ -84,6 +84,7 @@ test('public resume preserves content, print layout and minimal anonymous analyt
   await page.emulateMedia({ media: 'print' })
   await expect(page.locator('.guestbook')).toBeHidden()
   await expect(page.locator('.site-footer')).toBeHidden()
+  await fs.mkdir('.artifacts', { recursive: true })
   await page.pdf({ path: '.artifacts/resume-print.pdf', preferCSSPageSize: true })
   const pdf = await fs.readFile('.artifacts/resume-print.pdf')
   expect(pdf.toString('latin1').match(/\/Type\s*\/Page\b/g)).toHaveLength(2)
@@ -104,15 +105,32 @@ test('reading layout navigates without recording extra visits and fits small scr
   await expect.poll(() => state.visits.length).toBe(1)
   await expect(page.locator('.reading-sidebar')).toBeVisible()
   await expect(page.locator('.portrait')).toHaveCount(0)
-  await page.getByRole('navigation', { name: '简历目录' }).getByRole('link', { name: '项目经历' }).click()
+  await page.getByRole('navigation', { name: '简历目录' }).getByRole('button', { name: '项目经历' }).click()
   expect(await page.locator('#resume-section-3').evaluate(el => Math.abs(el.getBoundingClientRect().top - 24)) < 2).toBe(true)
   expect(state.visits).toHaveLength(1)
+  await expect(page).toHaveURL('http://127.0.0.1:5180/')
   for (const width of [900, 768, 390, 320]) {
     await page.setViewportSize({ width, height: 844 })
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
     await expect(page.locator('.reading-sidebar')).toBeHidden()
   }
   expect(state.exceptions).toEqual([])
+})
+
+test('old public links become clean URLs while admin routing remains available', async ({ page }) => {
+  await setup(page)
+  await page.goto('/?v=0c489c3#resume-section-2-item-1')
+  await expect(page).toHaveURL('http://127.0.0.1:5180/')
+  await expect(page.locator('#resume-section-2-item-1')).toHaveAttribute('open', '')
+  await expect(page.locator('.scan-facts')).toHaveCount(0)
+  await page.getByRole('navigation', { name: '简历目录' }).getByRole('button', { name: '留言' }).click()
+  await expect(page).toHaveURL('http://127.0.0.1:5180/')
+  await expect(page.locator('#guestbook')).toBeFocused()
+  await page.getByRole('link', { name: '站长管理' }).click()
+  await expect(page.getByLabel('管理员邮箱')).toBeVisible()
+  await page.reload()
+  await expect(page.getByLabel('管理员邮箱')).toBeVisible()
+  await expect(page).toHaveURL('http://127.0.0.1:5180/#/admin')
 })
 
 test('simple guestbook retains failed drafts, publishes and loads additional comments', async ({ page }) => {
@@ -137,12 +155,12 @@ test('simple guestbook retains failed drafts, publishes and loads additional com
   expect(state.exceptions).toEqual([])
 })
 
-test('scan view reveals complete evidence and follows content edits without stale highlights', async ({ page }) => {
+test('scan view keeps full content and updates project details from the source', async ({ page }) => {
   const state = await setup(page)
   await page.goto('/')
   await expect(page.locator('.scan-item[open]')).toHaveCount(0)
   const compactLength = await page.locator('.scan-resume').innerText().then(text => text.length)
-  await page.locator('.scan-facts a').filter({ hasText: '实体链接率' }).click()
+  await page.locator('.scan-item').filter({ has: page.locator('summary', { hasText: '春晓服装工序生成系统' }) }).locator('summary').click()
   const evidence = page.locator('.scan-item[open]')
   await expect(evidence).toContainText('98.90%')
   await expect(evidence.locator('.scan-detail')).toBeVisible()
@@ -154,8 +172,8 @@ test('scan view reveals complete evidence and follows content edits without stal
   await expect(circuit.locator('.scan-detail')).toContainText('WebSerial')
   await page.getByRole('button', { name: '收起全部', exact: true }).click()
   await expect(page.locator('.scan-item[open]')).toHaveCount(0)
-  // Revisiting the same evidence link must reopen it even when the hash is unchanged.
-  await page.locator('.scan-facts a').filter({ hasText: '实体链接率' }).click()
+  // Details can be reopened without changing the public URL.
+  await page.locator('.scan-item').filter({ has: page.locator('summary', { hasText: '春晓服装工序生成系统' }) }).locator('summary').click()
   await expect(page.locator('.scan-item[open]')).toHaveCount(1)
   const result = await page.evaluate(async original => {
     const modulePath = '/src/lib/reading.ts'
@@ -165,10 +183,12 @@ test('scan view reveals complete evidence and follows content edits without stal
     const model = buildReadingResume(updated)
     const toText = (html: string) => new DOMParser().parseFromString(html, 'text/html').body.textContent!.replace(/\s/g, '')
     const reconstructed = model.sections.map((section: { title: string; lead: string; items: { html: string }[] }) => section.title + section.lead + section.items.map(item => item.html).join('')).join('')
-    return { facts: model.facts, preserved: toText(reconstructed) === toText(updated.pages.map(page => page.html).join('')) }
+    return { content: reconstructed, preserved: toText(reconstructed) === toText(updated.pages.map(page => page.html).join('')) }
   }, source)
   expect(result.preserved).toBe(true)
-  expect(result.facts.find((fact: { label: string }) => fact.label === '实体链接率')?.value).toBe('97.50%')
+  expect(result.content).toContain('97.50%')
+  expect(result.content).not.toContain('98.90%')
+  await expect(page).toHaveURL('http://127.0.0.1:5180/')
   expect(state.exceptions).toEqual([])
 })
 

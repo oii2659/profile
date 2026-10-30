@@ -115,15 +115,6 @@ a:hover {
   gap: 6mm;
 }
 
-.portrait {
-  position: absolute;
-  width: 22.35mm;
-  height: 30.31mm;
-  right: 11.2mm;
-  top: 0;
-  object-fit: cover;
-}
-
 .education {
   display: flex;
   justify-content: space-between;
@@ -335,12 +326,6 @@ h3 {
   .identity-line {
     flex-wrap: wrap;
     gap: 0 15px;
-  }
-
-  .portrait {
-    right: 0;
-    width: 80px;
-    height: 109px;
   }
 
   .education {
