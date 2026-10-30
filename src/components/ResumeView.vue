@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { cleanResumeHtml, readingResume, type ResumeDocument } from '../lib/resume'
-const props = defineProps<{ document: ResumeDocument; reading?: boolean }>()
-const pages = computed(() => props.reading ? readingResume(props.document).pages : props.document.pages.map(page => cleanResumeHtml(page.html, true)))
+import { cleanResumeHtml, type ResumeDocument } from '../lib/resume'
+const props = defineProps<{ document: ResumeDocument }>()
+const pages = computed(() => props.document.pages.map(page => cleanResumeHtml(page.html, true)))
 </script>
 
 <template>
@@ -10,7 +10,6 @@ const pages = computed(() => props.reading ? readingResume(props.document).pages
     <article class="page page-one" aria-label="简历第 1 页">
       <header>
         <div class="identity">
-          <div v-if="reading" class="reading-identity"><h1>{{ document.profile.name }}</h1><p>{{ document.profile.jobIntention }}</p></div>
           <div class="identity-text">
             <div class="identity-line"><span>姓名：{{ document.profile.name }}</span><span>年龄：{{ document.profile.age }} 岁</span></div>
             <div class="identity-line contact-line"><span>手机：<a :href="'tel:' + document.profile.phone">{{ document.profile.phone }}</a></span><span>邮箱：<a :href="'mailto:' + document.profile.email">{{ document.profile.email }}</a></span></div>

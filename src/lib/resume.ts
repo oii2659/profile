@@ -1,26 +1,10 @@
 import DOMPurify from 'dompurify'
 import qrCodeUrl from '../assets/qrcode.png'
 import source from '../data/resume.json'
-import { resumeClasses, resumeTags, validateResume, type ResumeDocument } from '../../supabase/functions/_shared/resume'
+import { resumeClasses, resumeTags, validateResume } from '../../supabase/functions/_shared/resume'
 export type { ResumeDocument, ResumeProfile } from '../../supabase/functions/_shared/resume'
 export { validateResume } from '../../supabase/functions/_shared/resume'
 export const publishedResume = validateResume(source)
-
-// Build navigation from the same editable content that is rendered on the page.
-export function readingResume(document: ResumeDocument) {
-  const headings: { id: string; title: string }[] = []
-  const pages = document.pages.map(page => {
-    const container = window.document.createElement('div')
-    container.innerHTML = cleanResumeHtml(page.html, true)
-    container.querySelectorAll('h2').forEach(heading => {
-      const id = `resume-section-${headings.length + 1}`
-      heading.id = id
-      headings.push({ id, title: heading.textContent?.trim() || '简历内容' })
-    })
-    return container.innerHTML
-  })
-  return { pages, headings }
-}
 
 export function cleanResumeHtml(html: string, renderAssets = false): string {
   const fragment = DOMPurify.sanitize(html, {

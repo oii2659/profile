@@ -1,0 +1,76 @@
+@media screen {
+  .print-resume { display: none; }
+  .scan-resume { background: #fff; border: 1px solid #e3e6ea; border-radius: 3px; padding: 32px 38px; }
+  .scan-resume h1, .scan-resume h2 { color: #20242b; }
+  .scan-header .scan-overline { color: #68717e; font-size: 12px; margin-bottom: 8px; }
+  .scan-header h1 { font-size: 32px; line-height: 1.25; letter-spacing: .02em; }
+  .scan-role { margin-top: 8px; font-size: 18px; font-weight: 600; }
+  .scan-intro { margin-top: 10px; color: #56606d; font-size: 14px; }
+  .scan-education { display: flex; flex-wrap: wrap; gap: 2px 16px; margin-top: 16px; font-size: 13px; color: #56606d; }
+  .scan-contact { display: none; flex-wrap: wrap; gap: 4px 16px; margin-top: 10px; font-size: 13px; }
+  .scan-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 24px; margin-top: 26px; padding: 22px 0; border-top: 1px solid #e7ebef; border-bottom: 1px solid #e7ebef; }
+  .scan-facts > a { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; color: #56606d; font-size: 12px; line-height: 1.7; }
+  .scan-facts > a:hover { text-decoration: none; color: #056de8; }
+  .scan-facts strong { display: block; margin: 8px 0 6px; color: #20242b; font-size: 24px; font-weight: 650; line-height: 1.3; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+  .scan-facts small { font-size: 11px; color: #68717e; }
+  .scan-facts a:hover strong { color: #056de8; }
+  .scan-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 18px 0 22px; font-size: 12px; color: #68717e; }
+  .scan-controls button { flex-shrink: 0; border: 0; padding: 6px 0 6px 10px; border-radius: 3px; background: transparent; font-size: 13px; color: #056de8; }
+  .scan-section + .scan-section { margin-top: 26px; }
+  .scan-section > h2 { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 0 0 14px; padding: 0; border: 0; font-size: 20px; line-height: 1.5; scroll-margin-top: 24px; }
+  .scan-section > h2 > span { color: #68717e; font-size: 12px; font-weight: 400; }
+  .scan-lead .job-heading { margin: 0 0 14px; font-size: 15px; }
+  .scan-experience .scan-items { border-top: 0; border-left: 1px solid #dbe1e9; padding-left: 22px; margin-left: 4px; }
+  .scan-experience .scan-item { position: relative; }
+  .scan-experience .scan-item::before { content: ''; position: absolute; left: -27px; top: 26px; width: 8px; height: 8px; border: 2px solid #8b9daf; border-radius: 50%; background: white; }
+  .scan-items { border-top: 1px solid #e7ebef; }
+  .scan-item { border-bottom: 1px solid #e7ebef; scroll-margin-top: 24px; }
+  .scan-item > summary { display: block; list-style: none; padding: 18px 0; cursor: pointer; border-radius: 2px; }
+  .scan-item > summary::-webkit-details-marker { display: none; }
+  .scan-item > summary:focus-visible { outline: 2px solid #3865ae; outline-offset: 4px; }
+  .scan-item > summary:hover .scan-item-title { color: #056de8; }
+  .scan-item-heading { display: flex; justify-content: space-between; gap: 14px; }
+  .scan-item-title { font-size: 16px; font-weight: 600; line-height: 1.65; color: #242a32; }
+  .scan-chevron { flex-shrink: 0; color: #68717e; line-height: 1.5; transition: transform .15s; }
+  .scan-item[open] > summary .scan-chevron { transform: rotate(180deg); }
+  .scan-item > summary > time { display: block; margin-top: 4px; color: #68717e; font-size: 12px; font-weight: 400; }
+  .scan-teaser { display: block; margin-top: 8px; font-size: 14px; line-height: 1.8; color: #56606d; }
+  .scan-keywords { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 10px; font-size: 12px; color: #5c6572; }
+  .scan-keywords > span { line-height: 1.6; }
+  .scan-flow { display: flex; flex-wrap: wrap; gap: 5px 12px; margin-top: 12px; color: #425d78; font-size: 12px; line-height: 1.8; }
+  .scan-flow > span { display: inline-flex; gap: 12px; }
+  .scan-flow-arrow { color: #8c9bac; }
+  .scan-disclosure { display: block; margin-top: 10px; color: #056de8; font-size: 12px; }
+  .scan-detail { padding: 4px 0 18px; font-size: 15px; line-height: 1.9; }
+  .scan-detail > .project-heading, .scan-detail > .project-label, .scan-detail > h3 { display: none; }
+  .scan-overview .scan-item > summary { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; padding: 14px 0; }
+  .scan-overview .scan-keywords { display: none; }
+  .scan-overview .scan-disclosure { margin-top: 0; }
+  .scan-overview .scan-chevron { display: none; }
+  .scan-overview .scan-item-title { font-size: 14px; font-weight: 400; color: #56606d; }
+  .scan-overview > h2 { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .scan-overview .scan-items { border-top: 0; }
+  .scan-overview .scan-item > summary { padding-top: 0; }
+  .scan-skills .scan-items { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 24px; align-items: start; }
+  .scan-skills .scan-item-title { font-size: 14px; }
+  .scan-skills .scan-item[open] { grid-column: 1 / -1; }
+  .scan-skills .scan-disclosure { display: none; }
+  .scan-detail .github { overflow-wrap: anywhere; }
+  .scan-header, .scan-item { overflow-wrap: anywhere; }
+}
+@media screen and (max-width: 900px) { .scan-contact { display: flex; } }
+@media screen and (max-width: 600px) {
+  .scan-resume { padding: 26px 20px; border-left: 0; border-right: 0; border-radius: 0; }
+  .scan-header h1 { font-size: 28px; }
+  .scan-role { font-size: 16px; }
+  .scan-facts { grid-template-columns: 1fr; gap: 14px; padding: 18px 0; margin-top: 20px; }
+  .scan-facts > a { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; column-gap: 12px; }
+  .scan-facts strong { grid-column: 2; grid-row: 1 / 3; font-size: 21px; margin: 0; }
+  .scan-facts small { grid-column: 1; }
+  .scan-controls { align-items: center; margin-bottom: 18px; }
+  .scan-section > h2 { font-size: 19px; }
+  .scan-skills .scan-items { grid-template-columns: 1fr; }
+  .scan-item-title { font-size: 15px; }
+}
+@media (prefers-reduced-motion: reduce) { .scan-chevron { transition: none; } }
+@media print { .scan-resume { display: none; } }

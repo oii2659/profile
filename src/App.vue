@@ -2,11 +2,13 @@
 import { defineAsyncComponent, onBeforeUnmount, onMounted, ref } from 'vue'
 import Guestbook from './components/Guestbook.vue'
 import ResumeView from './components/ResumeView.vue'
-import { publishedResume, readingResume } from './lib/resume'
+import ReadingResume from './components/ReadingResume.vue'
+import { publishedResume } from './lib/resume'
+import { buildReadingResume } from './lib/reading'
 import { recordVisit } from './lib/analytics'
 const AdminApp = defineAsyncComponent(() => import('./admin/AdminApp.vue'))
 const isAdmin = ref(window.location.hash.startsWith('#/admin'))
-const resumeNavigation = readingResume(publishedResume).headings
+const resumeNavigation = buildReadingResume(publishedResume).sections
 function routeChanged() {
   const wasAdmin = isAdmin.value
   isAdmin.value = window.location.hash.startsWith('#/admin')
@@ -29,7 +31,8 @@ const printResume = () => window.print()
     </nav>
     <div class="reading-layout">
       <div class="reading-column">
-        <ResumeView :document="publishedResume" reading />
+        <ReadingResume :document="publishedResume" />
+        <div class="print-resume"><ResumeView :document="publishedResume" /></div>
         <Guestbook :email="publishedResume.profile.email" />
       </div>
       <aside class="reading-sidebar" aria-label="简历导航与联系方式">

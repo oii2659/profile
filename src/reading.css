@@ -119,4 +119,6 @@
 }
 @media print {
   .reading-sidebar, .guestbook { display: none; }
+  .page-one { font-size: 10.5pt; line-height: 1.32; }
+  .page-one .identity { height: 22mm; padding-top: 5mm; }
 }

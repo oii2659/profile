@@ -69,9 +69,9 @@ test('public resume preserves content, print layout and minimal anonymous analyt
   await page.goto('/')
   await expect(page.locator('article.page')).toHaveCount(2)
   for (let i=0; i<2; i++) {
-    const actual = await page.locator('.resume-content').nth(i).innerText()
+    const actual = await page.locator('.print-resume .resume-content').nth(i).textContent()
     const expected = await page.evaluate(html => new DOMParser().parseFromString(html, 'text/html').body.textContent, source.pages[i]!.html)
-    expect(actual.replace(/\s/g, '')).toBe(expected!.replace(/\s/g, ''))
+    expect(actual!.replace(/\s/g, '')).toBe(expected!.replace(/\s/g, ''))
   }
   await expect.poll(() => state.visits.length).toBe(1)
   expect(Object.keys(state.visits[0]!).sort()).toEqual(['device_type', 'event_id', 'page_path', 'referrer_host', 'session_id'])
@@ -85,6 +85,8 @@ test('public resume preserves content, print layout and minimal anonymous analyt
   await expect(page.locator('.guestbook')).toBeHidden()
   await expect(page.locator('.site-footer')).toBeHidden()
   await page.pdf({ path: '.artifacts/resume-print.pdf', preferCSSPageSize: true })
+  const pdf = await fs.readFile('.artifacts/resume-print.pdf')
+  expect(pdf.toString('latin1').match(/\/Type\s*\/Page\b/g)).toHaveLength(2)
   expect(state.exceptions).toEqual([])
 })
 
@@ -132,6 +134,41 @@ test('simple guestbook retains failed drafts, publishes and loads additional com
   await expect(draft).toHaveValue('')
   await expect(page.locator('.guestbook-message').first()).toContainText('希望了解更多项目细节。')
   await expect(page.getByRole('button', { name: /秒后可发布/ })).toBeDisabled()
+  expect(state.exceptions).toEqual([])
+})
+
+test('scan view reveals complete evidence and follows content edits without stale highlights', async ({ page }) => {
+  const state = await setup(page)
+  await page.goto('/')
+  await expect(page.locator('.scan-item[open]')).toHaveCount(0)
+  const compactLength = await page.locator('.scan-resume').innerText().then(text => text.length)
+  await page.locator('.scan-facts a').filter({ hasText: '实体链接率' }).click()
+  const evidence = page.locator('.scan-item[open]')
+  await expect(evidence).toContainText('98.90%')
+  await expect(evidence.locator('.scan-detail')).toBeVisible()
+  await page.getByRole('button', { name: '展开全部', exact: true }).click()
+  await expect(page.locator('.scan-item[open]')).toHaveCount(await page.locator('.scan-item').count())
+  const fullLength = await page.locator('.scan-resume').innerText().then(text => text.length)
+  expect(compactLength).toBeLessThan(fullLength * .5)
+  const circuit = page.locator('.scan-item').filter({ has: page.locator('summary', { hasText: 'Circuit Muse' }) })
+  await expect(circuit.locator('.scan-detail')).toContainText('WebSerial')
+  await page.getByRole('button', { name: '收起全部', exact: true }).click()
+  await expect(page.locator('.scan-item[open]')).toHaveCount(0)
+  // Revisiting the same evidence link must reopen it even when the hash is unchanged.
+  await page.locator('.scan-facts a').filter({ hasText: '实体链接率' }).click()
+  await expect(page.locator('.scan-item[open]')).toHaveCount(1)
+  const result = await page.evaluate(async original => {
+    const modulePath = '/src/lib/reading.ts'
+    const { buildReadingResume } = await import(modulePath)
+    const updated = structuredClone(original)
+    updated.pages[0].html = updated.pages[0].html.replaceAll('98.90%', '97.50%')
+    const model = buildReadingResume(updated)
+    const toText = (html: string) => new DOMParser().parseFromString(html, 'text/html').body.textContent!.replace(/\s/g, '')
+    const reconstructed = model.sections.map((section: { title: string; lead: string; items: { html: string }[] }) => section.title + section.lead + section.items.map(item => item.html).join('')).join('')
+    return { facts: model.facts, preserved: toText(reconstructed) === toText(updated.pages.map(page => page.html).join('')) }
+  }, source)
+  expect(result.preserved).toBe(true)
+  expect(result.facts.find((fact: { label: string }) => fact.label === '实体链接率')?.value).toBe('97.50%')
   expect(state.exceptions).toEqual([])
 })
 
