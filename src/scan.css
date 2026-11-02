@@ -66,21 +66,26 @@
   .resume-sidebar .resume-content ul { padding-left: 15px; }
   .skill-hint { display: flex; justify-content: space-between; gap: 8px; margin: -4px 0 21px; color: #858585; font-size: 10px; }
   .skill-hint > span { color: #707070; }
-  .scan-skills .scan-items { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 24px 14px; }
-  .scan-skills .scan-item > summary { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 0; text-align: center; }
   .skill-gauge { --proficiency: 0%; position: relative; display: flex; align-items: center; justify-content: center; flex: 0 0 86px; width: 86px; height: 86px; border-radius: 50%; background: conic-gradient(#727272 var(--proficiency), #d4d4d4 0); color: #ededed; font-size: 20px; transition: transform .18s; }
   .skill-gauge::before { content: ''; position: absolute; inset: 5px; border: 2px solid #f1f1f1; border-radius: 50%; background: #303030; }
   .skill-gauge > * { position: relative; }
   .skill-score { color: #e7e7e7; font-size: 19px; font-weight: 400; font-variant-numeric: tabular-nums; }
   .skill-score small { margin-left: 1px; font-size: 11px; }
-  .scan-skills .scan-item-title { font-size: 11px; font-weight: 400; color: #626262; }
-  .scan-skills summary:hover .skill-gauge { transform: translateY(-2px); }
-  .scan-skills .scan-item[open] { grid-column: 1 / -1; padding: 14px; border: 1px solid #d3d3d3; border-radius: 4px; }
-  .scan-skills .scan-item[open] > summary { flex-direction: row; text-align: left; }
-  .scan-skills .scan-item[open] .skill-gauge { flex-basis: 60px; width: 60px; height: 60px; }
-  .scan-skills .scan-item[open] .skill-score { font-size: 16px; }
-  .scan-skills .scan-item[open] .scan-item-title { font-size: 12px; font-weight: 500; }
-  .scan-skills .scan-detail { padding: 10px 0 0; }
+  .skill-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 14px; align-items: start; }
+  .skill-option { display: flex; flex-direction: column; align-items: center; gap: 10px; min-width: 0; padding: 0; border: 0; border-radius: 0; background: transparent; color: inherit; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+  .skill-option:hover { background: transparent; }
+  .skill-option:focus { outline: none; }
+  .skill-option:focus-visible .skill-gauge { outline: 2px solid #666; outline-offset: 5px; }
+  .skill-option .scan-item-title { font-size: 11px; font-weight: 400; color: #626262; }
+  .skill-option .skill-gauge { transition: transform .2s ease, box-shadow .2s ease; }
+  .skill-option[aria-expanded="true"] .skill-gauge { box-shadow: 0 0 0 3px #f1f1f1, 0 0 0 4px #888; }
+  .skill-option:active .skill-gauge { transform: scale(.96); }
+  .skill-panel { display: grid; grid-template-rows: 0fr; opacity: 0; visibility: hidden; transition: grid-template-rows .26s ease, opacity .2s ease, visibility .26s; }
+  .skill-panel.is-open { grid-template-rows: 1fr; opacity: 1; visibility: visible; }
+  .skill-panel-clip { min-height: 0; overflow: hidden; }
+  .skill-panel-body { margin-top: 22px; padding: 16px 0 0; border-top: 1px solid #d3d3d3; }
+  .skill-panel-title { color: #333; font-size: 13px; font-weight: 600; }
+  .skill-panel .scan-detail { padding: 4px 0 0; }
 }
 @media screen and (max-width: 1100px) {
   .resume-columns { grid-template-columns: minmax(0, 1fr) 280px; }
@@ -91,7 +96,6 @@
   .scan-header { padding-left: 32px; }
   .resume-columns { grid-template-columns: minmax(0, 1fr) 250px; }
   .resume-sidebar { padding-left: 20px; padding-right: 20px; }
-  .scan-skills .scan-items { column-gap: 10px; }
   .skill-gauge { flex-basis: 76px; width: 76px; height: 76px; }
 }
 @media screen and (max-width: 820px) {
@@ -121,10 +125,8 @@
   .education-entry, .education-details { font-size: 14px; }
   .public-site .scan-lead .job-heading { font-size: 15px; }
   .public-site .scan-lead .job-heading time { font-size: 13px; }
-  .scan-skills .scan-items { gap: 26px 22px; }
   .skill-gauge { flex-basis: 94px; width: 94px; height: 94px; }
-  .scan-skills .scan-item-title { font-size: 14px; }
-  .scan-skills .scan-item[open] .scan-item-title { font-size: 14px; }
+  .skill-option .scan-item-title { font-size: 14px; }
   .skill-hint { font-size: 12px; }
   .scan-about { font-size: 15px; line-height: 1.9; color: #626262; }
   .profile-details { font-size: 14px; gap: 6px; }
@@ -139,10 +141,12 @@
   .mobile-contact a { padding: 0 10px; }
 }
 @media screen and (hover: hover) {
+  .skill-option:hover .skill-gauge { transform: translateY(-2px); }
   .resume-main .scan-item > summary:hover { background: #f5f5f5; }
   .resume-main .scan-item > summary:hover .scan-toggle { background: #333; border-color: #333; color: #fff; }
 }
 @media (prefers-reduced-motion: reduce) {
+  .skill-panel, .skill-option .skill-gauge { transition: none; }
   .scan-toggle, .scan-toggle-vertical, .resume-main .scan-item > summary, .skill-gauge { transition: none; }
 }
 @media print { .scan-resume { display: none; } }
