@@ -63,8 +63,8 @@ const printResume = () => window.print()
       </div>
     </div>
     <footer class="site-footer">
-      <p v-if="recordVisit.enabled">本站记录匿名访问统计：时间、页面、来源网站和设备类型，不收集姓名或 IP。</p>
-      <a :href="adminPath">站长管理</a>
+      <p v-if="recordVisit.enabled">本站记录匿名访问统计：时间、页面、来源网站和设备类型，不收集姓名或 IP</p>
+      <!-- <a :href="adminPath">站长管理</a> -->
     </footer>
   </div>
 </template>
