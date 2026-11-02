@@ -85,6 +85,22 @@ export function buildReadingResume(resume: ResumeDocument) {
     return section
   })
 
-  const introduction = text(root.querySelector('.summary > p')).split(/[，；。]/)[0] || resume.profile.jobIntention
-  return { sections, introduction }
+  const summary = text(root.querySelector('.summary > p'))
+  const introduction = summary.split(/[，；。]/)[0] || resume.profile.jobIntention
+  const educationDetails: string[] = []
+  const overviewContent: Record<string, string> = {}
+  for (const section of sections.filter(section => section.kind === 'overview')) {
+    for (const item of section.items) {
+      const content = document.createElement('div')
+      content.innerHTML = item.html
+      for (const paragraph of content.querySelectorAll('p')) {
+        if (/^(?:竞赛经历|修读课程)\s*[：:]/.test(text(paragraph))) {
+          educationDetails.push(paragraph.outerHTML)
+          paragraph.remove()
+        }
+      }
+      overviewContent[item.id] = content.innerHTML
+    }
+  }
+  return { sections, introduction, summary, educationDetails: educationDetails.join(''), overviewContent }
 }

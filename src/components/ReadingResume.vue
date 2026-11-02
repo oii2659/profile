@@ -2,15 +2,15 @@
 import { computed, nextTick, ref } from 'vue'
 import { buildReadingResume } from '../lib/reading'
 import type { ResumeDocument } from '../lib/resume'
+import ResumeIcon from './ResumeIcon.vue'
+import ReadingSection from './ReadingSection.vue'
 
 const props = defineProps<{ document: ResumeDocument }>()
 const model = computed(() => buildReadingResume(props.document))
+const mainSections = computed(() => model.value.sections.filter(section => !['overview', 'skills'].includes(section.kind)))
+const sideSections = computed(() => model.value.sections.filter(section => ['overview', 'skills'].includes(section.kind)))
 const root = ref<HTMLElement>()
 const expanded = ref(new Set<string>())
-const allExpanded = computed(() => model.value.sections.flatMap(s => s.items).every(item => expanded.value.has(item.id)))
-function toggleAll() {
-  expanded.value = allExpanded.value ? new Set() : new Set(model.value.sections.flatMap(s => s.items.map(i => i.id)))
-}
 function toggled(id: string, event: Event) {
   const next = new Set(expanded.value)
   if ((event.target as HTMLDetailsElement).open) next.add(id)
@@ -29,31 +29,38 @@ defineExpose({ reveal })
 <template>
   <main ref="root" class="scan-resume" :aria-label="document.profile.name + '个人简历速览'">
     <header class="scan-header">
-      <p class="scan-overline">个人简历</p>
+      <span class="resume-watermark" aria-hidden="true">Personal resume</span>
       <h1>{{ document.profile.name }}</h1>
-      <p class="scan-role">{{ document.profile.jobIntention }}</p>
       <p class="scan-intro">{{ model.introduction }}</p>
-      <div class="scan-education"><span>{{ document.education.school }}</span><span>{{ document.education.degree }}</span><span>{{ document.education.period }}</span></div>
-      <div class="scan-contact"><a :href="'mailto:' + document.profile.email">{{ document.profile.email }}</a><a :href="'tel:' + document.profile.phone">{{ document.profile.phone }}</a></div>
+      <span class="header-caption" aria-hidden="true">个人简历</span>
     </header>
-
-    <div class="scan-controls"><span>经历概览 · 展开可查看完整内容</span><button type="button" @click="toggleAll">{{ allExpanded ? '收起全部' : '展开全部' }}</button></div>
-    <section v-for="section in model.sections" :key="section.id" :class="['scan-section', 'scan-' + section.kind]" :aria-labelledby="section.id">
-      <h2 :id="section.id">{{ section.title }}<span v-if="section.kind === 'experience' || section.kind === 'projects'">{{ section.items.length }} 个项目</span></h2>
-      <div v-if="section.lead" class="scan-lead" v-html="section.lead" />
-      <div class="scan-items">
-        <details v-for="item in section.items" :id="item.id" :key="item.id" :open="expanded.has(item.id)" class="scan-item" @toggle="toggled(item.id, $event)">
-          <summary>
-            <span class="scan-item-heading"><span class="scan-item-title">{{ item.title }}</span><span class="scan-chevron" aria-hidden="true">⌄</span></span>
-            <time v-if="item.date">{{ item.date }}</time>
-            <span v-if="item.teaser && section.kind !== 'overview'" class="scan-teaser">{{ item.teaser }}</span>
-            <span v-if="item.flow.length" class="scan-flow" role="img" :aria-label="'Agent 工作流：' + item.flow.join(' → ')"><span v-for="(step, index) in item.flow" :key="step"><span v-if="index" class="scan-flow-arrow" aria-hidden="true">→</span>{{ step }}</span></span>
-            <span v-if="item.keywords.length" class="scan-keywords"><span v-for="keyword in item.keywords" :key="keyword">{{ keyword }}</span></span>
-            <span class="scan-disclosure">{{ expanded.has(item.id) ? '收起详情' : '查看详情' }}</span>
-          </summary>
-          <div class="resume-content scan-detail" v-html="item.html" />
-        </details>
+    <div class="resume-columns">
+      <div class="resume-main">
+        <section class="scan-section resume-intention" aria-labelledby="resume-intention">
+          <h2 id="resume-intention"><span>求职意向</span></h2>
+          <p><ResumeIcon name="code" />{{ document.profile.jobIntention }}</p>
+        </section>
+        <section class="scan-section resume-education" aria-labelledby="resume-education">
+          <h2 id="resume-education"><span>教育背景</span></h2>
+          <div class="education-entry">
+            <div class="education-heading"><time>{{ document.education.period }}</time><strong>{{ document.education.school }}</strong></div>
+            <p>{{ document.education.degree }}</p>
+            <div v-if="model.educationDetails" class="resume-content education-details" v-html="model.educationDetails" />
+          </div>
+        </section>
+        <ReadingSection v-for="section in mainSections" :key="section.id" :section="section" :expanded="expanded" @toggle="toggled" />
       </div>
-    </section>
+      <aside class="resume-sidebar" aria-label="个人信息与专业技能">
+        <section class="scan-section profile-information" aria-labelledby="profile-information">
+          <h2 id="profile-information"><span>基本信息</span></h2>
+          <dl class="profile-details">
+            <div><dt><ResumeIcon name="user" /><span class="visually-hidden">年龄</span></dt><dd>{{ document.profile.age }} 岁</dd></div>
+            <div><dt><ResumeIcon name="phone" /><span class="visually-hidden">电话</span></dt><dd><a :href="'tel:' + document.profile.phone">{{ document.profile.phone }}</a></dd></div>
+            <div><dt><ResumeIcon name="mail" /><span class="visually-hidden">邮箱</span></dt><dd><a :href="'mailto:' + document.profile.email">{{ document.profile.email }}</a></dd></div>
+          </dl>
+        </section>
+        <ReadingSection v-for="section in sideSections" :key="section.id" :section="section" :expanded="expanded" :overview-content="model.overviewContent" @toggle="toggled" />
+      </aside>
+    </div>
   </main>
 </template>

@@ -1,66 +1,125 @@
+/* Reference-inspired monochrome resume. Print remains a separate document. */
 @media screen {
   .print-resume { display: none; }
-  .scan-resume { background: #fff; border: 1px solid #e3e6ea; border-radius: 3px; padding: 32px 38px; }
-  .scan-resume h1, .scan-resume h2 { color: #20242b; }
-  .scan-header .scan-overline { color: #68717e; font-size: 12px; margin-bottom: 8px; }
-  .scan-header h1 { font-size: 32px; line-height: 1.25; letter-spacing: .02em; }
-  .scan-role { margin-top: 8px; font-size: 18px; font-weight: 600; }
-  .scan-intro { margin-top: 10px; color: #56606d; font-size: 14px; }
-  .scan-education { display: flex; flex-wrap: wrap; gap: 2px 16px; margin-top: 16px; font-size: 13px; color: #56606d; }
-  .scan-contact { display: none; flex-wrap: wrap; gap: 4px 16px; margin-top: 10px; font-size: 13px; }
-  .scan-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 24px 0 22px; padding-top: 18px; border-top: 1px solid #e7ebef; font-size: 12px; color: #68717e; }
-  .scan-controls button { flex-shrink: 0; border: 0; padding: 6px 0 6px 10px; border-radius: 3px; background: transparent; font-size: 13px; color: #056de8; }
-  .scan-section + .scan-section { margin-top: 26px; }
-  .scan-section > h2 { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 0 0 14px; padding: 0; border: 0; font-size: 20px; line-height: 1.5; scroll-margin-top: 24px; }
-  .scan-section > h2 > span { color: #68717e; font-size: 12px; font-weight: 400; }
-  .scan-lead .job-heading { margin: 0 0 14px; font-size: 15px; }
-  .scan-experience .scan-items { border-top: 0; border-left: 1px solid #dbe1e9; padding-left: 22px; margin-left: 4px; }
-  .scan-experience .scan-item { position: relative; }
-  .scan-experience .scan-item::before { content: ''; position: absolute; left: -27px; top: 26px; width: 8px; height: 8px; border: 2px solid #8b9daf; border-radius: 50%; background: white; }
-  .scan-items { border-top: 1px solid #e7ebef; }
-  .scan-item { border-bottom: 1px solid #e7ebef; scroll-margin-top: 24px; }
-  .scan-item > summary { display: block; list-style: none; padding: 18px 0; cursor: pointer; border-radius: 2px; }
+  .scan-resume { overflow: hidden; border: 1px solid #d8d8d8; border-radius: 4px; background: #fff; box-shadow: 0 8px 32px #00000006; }
+  .scan-header { position: relative; isolation: isolate; overflow: hidden; min-height: 220px; padding: 108px 46px 32px; background: #292929; color: #fff; }
+  .resume-watermark { position: absolute; z-index: -1; top: -15px; left: 28px; color: #3b3b3b; font-family: 'Oswald Variable', 'Arial Narrow', sans-serif; font-size: clamp(90px, 10.8vw, 150px); line-height: 1.1; font-weight: 500; letter-spacing: -.04em; white-space: nowrap; user-select: none; }
+  .scan-header h1 { margin: 0; color: #fff; font-size: 36px; line-height: 1.4; font-weight: 500; letter-spacing: .08em; }
+  .scan-intro { position: relative; margin-top: 10px; max-width: 78%; color: #e0e0e0; font-size: 13px; line-height: 1.8; }
+  .header-caption { position: absolute; right: 40px; bottom: 37px; color: #bdbdbd; font-size: 11px; letter-spacing: .25em; }
+  .resume-columns { display: grid; grid-template-columns: minmax(0, 1fr) 310px; }
+  .resume-main { min-width: 0; padding: 34px 36px 42px 46px; }
+  .resume-sidebar { min-width: 0; padding: 34px 28px 42px; background: #f1f1f1; }
+  .scan-section + .scan-section { margin-top: 32px; }
+  .scan-section > h2 { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 18px; padding: 0; border: 0; color: #fff; font-size: 16px; font-weight: 400; line-height: 1.6; scroll-margin-top: 24px; }
+  .scan-section > h2 > span { display: inline-block; padding: 4px 14px; background: #2c2c2c; }
+  .scan-section > h2 > small { color: #858585; font-size: 11px; font-weight: 400; }
+  .resume-intention > p { display: flex; align-items: center; gap: 9px; color: #555; font-size: 14px; }
+  .resume-intention > p .resume-icon { color: #8c8c8c; font-size: 18px; }
+  .education-entry { position: relative; margin-left: 5px; padding-left: 19px; border-left: 1px solid #b9b9b9; font-size: 13px; }
+  .education-entry::before { content: ''; position: absolute; left: -5px; top: 6px; width: 9px; height: 9px; background: #303030; border-radius: 50%; }
+  .education-heading { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 5px 15px; color: #303030; }
+  .education-heading time { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .education-heading strong { font-weight: 600; }
+  .education-entry > p { margin-top: 5px; color: #707070; }
+  .education-details { margin-top: 12px; color: #737373; font-size: 13px; line-height: 1.95; }
+  .public-site .education-details p { margin: 8px 0 0; }
+  .public-site .education-details strong { color: #444; font-weight: 500; }
+  .scan-items { border: 0; }
+  .scan-item { position: relative; min-width: 0; scroll-margin-top: 24px; overflow-wrap: anywhere; }
+  .scan-item > summary { display: block; padding: 0 0 22px; list-style: none; cursor: pointer; border-radius: 3px; }
   .scan-item > summary::-webkit-details-marker { display: none; }
-  .scan-item > summary:focus-visible { outline: 2px solid #3865ae; outline-offset: 4px; }
-  .scan-item > summary:hover .scan-item-title { color: #056de8; }
-  .scan-item-heading { display: flex; justify-content: space-between; gap: 14px; }
-  .scan-item-title { font-size: 16px; font-weight: 600; line-height: 1.65; color: #242a32; }
-  .scan-chevron { flex-shrink: 0; color: #68717e; line-height: 1.5; transition: transform .15s; }
-  .scan-item[open] > summary .scan-chevron { transform: rotate(180deg); }
-  .scan-item > summary > time { display: block; margin-top: 4px; color: #68717e; font-size: 12px; font-weight: 400; }
-  .scan-teaser { display: block; margin-top: 8px; font-size: 14px; line-height: 1.8; color: #56606d; }
-  .scan-keywords { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 10px; font-size: 12px; color: #5c6572; }
-  .scan-keywords > span { line-height: 1.6; }
-  .scan-flow { display: flex; flex-wrap: wrap; gap: 5px 12px; margin-top: 12px; color: #425d78; font-size: 12px; line-height: 1.8; }
-  .scan-flow > span { display: inline-flex; gap: 12px; }
-  .scan-flow-arrow { color: #8c9bac; }
-  .scan-disclosure { display: block; margin-top: 10px; color: #056de8; font-size: 12px; }
-  .scan-detail { padding: 4px 0 18px; font-size: 15px; line-height: 1.9; }
+  .scan-item > summary:focus-visible { outline: 2px solid #555; outline-offset: 5px; }
+  .scan-item-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .scan-item-title { color: #333; font-size: 14px; font-weight: 600; line-height: 1.75; }
+  .scan-toggle { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 32px; width: 32px; height: 32px; border: 1px solid #cfcfcf; border-radius: 50%; background: #fff; color: #555; transition: background-color .18s, border-color .18s, color .18s; }
+  .scan-toggle svg { width: 16px; height: 16px; }
+  .scan-toggle-vertical { transform-origin: 10px 10px; transition: transform .18s ease, opacity .18s ease; }
+  .resume-main .scan-item { margin-bottom: 14px; }
+  .resume-main .scan-item > summary { margin-left: -10px; margin-right: -10px; padding: 10px; border-radius: 6px; transition: background-color .18s; }
+  .resume-main .scan-item[open] > summary, .resume-main .scan-item > summary:focus-visible { background: #f5f5f5; }
+  .scan-item > summary:focus-visible .scan-toggle, .scan-item[open] > summary .scan-toggle { background: #333; border-color: #333; color: #fff; }
+  .scan-item[open] .scan-toggle-vertical { transform: scaleY(0); opacity: 0; }
+  .resume-main .scan-item[open] > .scan-detail { margin-top: 14px; padding-top: 12px; border-top: 1px solid #e5e5e5; }
+  .scan-item > summary > time { display: block; margin-bottom: 4px; color: #444; font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .scan-teaser { display: block; margin-top: 5px; color: #737373; font-size: 13px; line-height: 1.9; }
+  .scan-keywords { display: flex; flex-wrap: wrap; gap: 5px 11px; margin-top: 8px; color: #777; font-size: 11px; }
+  .scan-flow { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 9px; color: #606060; font-size: 11px; line-height: 1.8; }
+  .scan-flow > span { display: inline-flex; gap: 10px; }
+  .scan-flow-arrow { color: #aaa; }
+  .scan-detail { padding: 0 0 24px; color: #626262; font-size: 13px; line-height: 1.95; }
   .scan-detail > .project-heading, .scan-detail > .project-label, .scan-detail > h3 { display: none; }
-  .scan-overview .scan-item > summary { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; padding: 14px 0; }
-  .scan-overview .scan-keywords { display: none; }
-  .scan-overview .scan-disclosure { margin-top: 0; }
-  .scan-overview .scan-chevron { display: none; }
-  .scan-overview .scan-item-title { font-size: 14px; font-weight: 400; color: #56606d; }
-  .scan-overview > h2 { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-  .scan-overview .scan-items { border-top: 0; }
-  .scan-overview .scan-item > summary { padding-top: 0; }
-  .scan-skills .scan-items { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 24px; align-items: start; }
-  .scan-skills .scan-item-title { font-size: 14px; }
-  .scan-skills .scan-item[open] { grid-column: 1 / -1; }
-  .scan-skills .scan-disclosure { display: none; }
   .scan-detail .github { overflow-wrap: anywhere; }
-  .scan-header, .scan-item { overflow-wrap: anywhere; }
+  .scan-experience .scan-items, .scan-projects .scan-items { margin-left: 5px; padding-left: 19px; border-left: 1px solid #c9c9c9; }
+  .scan-experience .scan-item::before, .scan-projects .scan-item::before { content: ''; position: absolute; left: -24px; top: 18px; width: 9px; height: 9px; background: #303030; border-radius: 50%; }
+  .public-site .scan-lead .job-heading { display: flex; flex-direction: column; gap: 3px; margin: 0 0 18px; font-size: 13px; }
+  .public-site .scan-lead .job-heading time { order: -1; color: #4b4b4b; font-size: 12px; font-weight: 600; }
+  .resume-main .scan-item:last-child { margin-bottom: 0; }
+  .profile-details { display: grid; gap: 13px; margin: 0; color: #737373; font-size: 12px; }
+  .profile-details > div { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .profile-details dt { display: flex; align-items: center; justify-content: center; flex: 0 0 23px; width: 23px; height: 23px; border: 1px solid #bdbdbd; border-radius: 50%; color: #8c8c8c; font-size: 13px; }
+  .profile-details dd { min-width: 0; margin: 0; overflow-wrap: anywhere; }
+  .profile-details a:hover { color: #222; }
+  .scan-about { margin: 0 0 16px; color: #777; font-size: 12px; line-height: 2; text-align: left; }
+  .resume-sidebar .scan-detail { font-size: 12px; line-height: 1.9; }
+  .resume-sidebar .resume-content ul { padding-left: 15px; }
+  .skill-hint { display: flex; justify-content: space-between; gap: 8px; margin: -4px 0 21px; color: #858585; font-size: 10px; }
+  .skill-hint > span { color: #707070; }
+  .scan-skills .scan-items { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 24px 14px; }
+  .scan-skills .scan-item > summary { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 0; text-align: center; }
+  .skill-gauge { --proficiency: 0%; position: relative; display: flex; align-items: center; justify-content: center; flex: 0 0 86px; width: 86px; height: 86px; border-radius: 50%; background: conic-gradient(#727272 var(--proficiency), #d4d4d4 0); color: #ededed; font-size: 20px; transition: transform .18s; }
+  .skill-gauge::before { content: ''; position: absolute; inset: 5px; border: 2px solid #f1f1f1; border-radius: 50%; background: #303030; }
+  .skill-gauge > * { position: relative; }
+  .skill-score { color: #e7e7e7; font-size: 19px; font-weight: 400; font-variant-numeric: tabular-nums; }
+  .skill-score small { margin-left: 1px; font-size: 11px; }
+  .scan-skills .scan-item-title { font-size: 11px; font-weight: 400; color: #626262; }
+  .scan-skills summary:hover .skill-gauge { transform: translateY(-2px); }
+  .scan-skills .scan-item[open] { grid-column: 1 / -1; padding: 14px; border: 1px solid #d3d3d3; border-radius: 4px; }
+  .scan-skills .scan-item[open] > summary { flex-direction: row; text-align: left; }
+  .scan-skills .scan-item[open] .skill-gauge { flex-basis: 60px; width: 60px; height: 60px; }
+  .scan-skills .scan-item[open] .skill-score { font-size: 16px; }
+  .scan-skills .scan-item[open] .scan-item-title { font-size: 12px; font-weight: 500; }
+  .scan-skills .scan-detail { padding: 10px 0 0; }
 }
-@media screen and (max-width: 900px) { .scan-contact { display: flex; } }
-@media screen and (max-width: 600px) {
-  .scan-resume { padding: 26px 20px; border-left: 0; border-right: 0; border-radius: 0; }
-  .scan-header h1 { font-size: 28px; }
-  .scan-role { font-size: 16px; }
-  .scan-controls { align-items: center; margin-bottom: 18px; }
-  .scan-section > h2 { font-size: 19px; }
-  .scan-skills .scan-items { grid-template-columns: 1fr; }
-  .scan-item-title { font-size: 15px; }
+@media screen and (max-width: 1100px) {
+  .resume-columns { grid-template-columns: minmax(0, 1fr) 280px; }
+  .resume-main { padding-left: 32px; padding-right: 28px; }
+  .resume-sidebar { padding-left: 24px; padding-right: 24px; }
 }
-@media (prefers-reduced-motion: reduce) { .scan-chevron { transition: none; } }
+@media screen and (max-width: 900px) {
+  .scan-header { padding-left: 32px; }
+  .resume-columns { grid-template-columns: minmax(0, 1fr) 250px; }
+  .resume-sidebar { padding-left: 20px; padding-right: 20px; }
+  .scan-skills .scan-items { column-gap: 10px; }
+  .skill-gauge { flex-basis: 76px; width: 76px; height: 76px; }
+}
+@media screen and (max-width: 650px) {
+  .scan-resume { border-left: 0; border-right: 0; border-radius: 0; }
+  .scan-header { min-height: 180px; padding: 80px 24px 25px; }
+  .resume-watermark { top: 4px; left: 13px; font-size: 78px; }
+  .scan-header h1 { font-size: 30px; }
+  .scan-intro { max-width: 100%; font-size: 11px; }
+  .header-caption { display: none; }
+  .resume-columns { grid-template-columns: 1fr; }
+  .resume-main { padding: 27px 24px 32px; }
+  .resume-sidebar { padding: 28px 24px 32px; }
+  .scan-section > h2 { font-size: 15px; }
+  .scan-section > h2 > span { padding: 4px 12px; }
+  .scan-item-title { font-size: 13px; }
+  .scan-teaser { font-size: 12px; }
+  .scan-detail { font-size: 12px; }
+  .education-heading { flex-direction: column; gap: 4px; font-size: 12px; }
+  .scan-skills .scan-items { gap: 26px 22px; }
+  .skill-gauge { flex-basis: 94px; width: 94px; height: 94px; }
+  .scan-skills .scan-item-title { font-size: 12px; }
+  .scan-about { font-size: 13px; }
+  .profile-details { font-size: 13px; }
+}
+@media screen and (hover: hover) {
+  .resume-main .scan-item > summary:hover { background: #f5f5f5; }
+  .resume-main .scan-item > summary:hover .scan-toggle { background: #333; border-color: #333; color: #fff; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scan-toggle, .scan-toggle-vertical, .resume-main .scan-item > summary, .skill-gauge { transition: none; }
+}
 @media print { .scan-resume { display: none; } }

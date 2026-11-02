@@ -1,6 +1,6 @@
 # 莫晓诗个人简历
 
-Vue 3 + TypeScript + Vite 简历网站，公开地址为 https://xsmore.cn/ 。网页采用双栏摘要与可展开详情，支持手机阅读和完整 A4 打印。
+Vue 3 + TypeScript + Vite 简历网站，公开地址为 https://xsmore.cn/ 。网页采用黑白灰双栏设计：深色通栏页头，左栏展示求职意向、教育、实习与项目时间线，右栏展示个人信息、介绍和可点击的技能圆环。支持手机阅读、展开详情和完整 A4 打印。
 
 ## 启动
 
@@ -25,12 +25,15 @@ npm run preview
 ## 编辑
 
 - `src/data/resume.json`：简历正文和个人信息的唯一内容来源，在线后台保存时修改此文件。
-- `src/components/ReadingResume.vue`、`src/lib/reading.ts`：从正文生成摘要、项目流程和可展开详情。
+- `src/data/skill-proficiency.json`：技能圆环的个人自评百分比，按技能标题对应；新增未评分技能显示展开图标。此文件单独维护，不属于后台正文编辑范围。
+- `src/components/ReadingResume.vue`、`src/components/ReadingSection.vue`、`src/lib/reading.ts`：从正文生成双栏简历、项目流程和可展开详情。
 - `src/components/ResumeView.vue`：打印简历和后台预览。
 - `src/App.vue`：公开网站、后台入口和打印按钮。
 - `src/admin/`：站长登录、富文本编辑、留言管理、访问统计。
 - `src/style.css`、`src/reading.css`、`src/scan.css`：打印、网页及摘要布局样式。
 - `src/assets/`：本地字体和项目二维码。
+
+网页字体采用本地打包的 Noto Sans SC 可变字体（`@fontsource-variable/noto-sans-sc`），根据字符范围按需加载；页头英文装饰字采用 Oswald，A4 打印沿用原版字体。交互图标采用 Ant Design Icons 的本地 SVG，统一由 `ResumeIcon.vue` 渲染。字体与图标许可证随网站发布在 `public/licenses/`。
 
 构建产物 `dist/`、测试输出 `.artifacts/` 和 `test-results/` 可重新生成，不提交到仓库。目录定位和详情展开不改变公开页面地址；旧链接的版本参数与章节锚点会自动清理，后台使用 `/admin`，旧的 `/#/admin` 链接会自动切换到新地址。
 

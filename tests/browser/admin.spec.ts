@@ -103,16 +103,23 @@ test('reading layout navigates without recording extra visits and fits small scr
   const state = await setup(page)
   await page.goto('/')
   await expect.poll(() => state.visits.length).toBe(1)
-  await expect(page.locator('.reading-sidebar')).toBeVisible()
+  await expect(page.getByRole('navigation', { name: '简历目录' })).toHaveCount(0)
+  await expect(page.locator('.scan-controls')).toHaveCount(0)
+  await expect(page.locator('.resume-education')).toContainText('竞赛经历：')
+  await expect(page.locator('.resume-education')).toContainText('修读课程：')
+  await expect(page.locator('.resume-education')).toContainText('全国大学生数学建模竞赛')
+  await expect(page.locator('.resume-education')).toContainText('均取得 90+')
+  await expect(page.locator('.scan-overview')).not.toContainText('竞赛经历')
+  await expect(page.locator('.scan-overview')).not.toContainText('修读课程')
+  await expect(page.locator('.scan-overview details')).toHaveCount(0)
   await expect(page.locator('.portrait')).toHaveCount(0)
-  await page.getByRole('navigation', { name: '简历目录' }).getByRole('button', { name: '项目经历' }).click()
-  expect(await page.locator('#resume-section-3').evaluate(el => Math.abs(el.getBoundingClientRect().top - 24)) < 2).toBe(true)
+  await page.getByRole('navigation', { name: '简历操作' }).getByRole('button', { name: '留言' }).click()
+  await expect(page.locator('#guestbook')).toBeFocused()
   expect(state.visits).toHaveLength(1)
   await expect(page).toHaveURL('http://127.0.0.1:5180/')
   for (const width of [900, 768, 390, 320]) {
     await page.setViewportSize({ width, height: 844 })
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
-    await expect(page.locator('.reading-sidebar')).toBeHidden()
   }
   expect(state.exceptions).toEqual([])
 })
@@ -123,7 +130,7 @@ test('old public links become clean URLs while admin routing remains available',
   await expect(page).toHaveURL('http://127.0.0.1:5180/')
   await expect(page.locator('#resume-section-2-item-1')).toHaveAttribute('open', '')
   await expect(page.locator('.scan-facts')).toHaveCount(0)
-  await page.getByRole('navigation', { name: '简历目录' }).getByRole('button', { name: '留言' }).click()
+  await page.getByRole('navigation', { name: '简历操作' }).getByRole('button', { name: '留言' }).click()
   await expect(page).toHaveURL('http://127.0.0.1:5180/')
   await expect(page.locator('#guestbook')).toBeFocused()
   await page.getByRole('link', { name: '站长管理' }).click()
@@ -189,13 +196,15 @@ test('scan view keeps full content and updates project details from the source',
   const evidence = page.locator('.scan-item[open]')
   await expect(evidence).toContainText('98.90%')
   await expect(evidence.locator('.scan-detail')).toBeVisible()
-  await page.getByRole('button', { name: '展开全部', exact: true }).click()
+  for (const item of await page.locator('.scan-item').all()) {
+    if (await item.getAttribute('open') === null) await item.locator('summary').click()
+  }
   await expect(page.locator('.scan-item[open]')).toHaveCount(await page.locator('.scan-item').count())
   const fullLength = await page.locator('.scan-resume').innerText().then(text => text.length)
   expect(compactLength).toBeLessThan(fullLength * .5)
   const circuit = page.locator('.scan-item').filter({ has: page.locator('summary', { hasText: 'Circuit Muse' }) })
   await expect(circuit.locator('.scan-detail')).toContainText('WebSerial')
-  await page.getByRole('button', { name: '收起全部', exact: true }).click()
+  for (const item of await page.locator('.scan-item').all()) await item.locator('summary').click()
   await expect(page.locator('.scan-item[open]')).toHaveCount(0)
   // Details can be reopened without changing the public URL.
   await page.locator('.scan-item').filter({ has: page.locator('summary', { hasText: '春晓服装工序生成系统' }) }).locator('summary').click()
@@ -213,6 +222,36 @@ test('scan view keeps full content and updates project details from the source',
   expect(result.preserved).toBe(true)
   expect(result.content).toContain('97.50%')
   expect(result.content).not.toContain('98.90%')
+  await expect(page).toHaveURL('http://127.0.0.1:5180/')
+  expect(state.exceptions).toEqual([])
+})
+
+test('skill circles show self-assessments and reveal matching details by mouse and keyboard', async ({ page }) => {
+  const state = await setup(page)
+  await page.goto('/')
+  await expect(page.locator('.scan-header img')).toHaveCount(0)
+  const skills = page.locator('.scan-skills .scan-item')
+  const expected = [
+    { title: 'Agent 开发（设计）', score: '85%', content: 'LangGraph' },
+    { title: 'Agent 系统工程', score: '85%', content: '上下文隔离' },
+    { title: '后端开发', score: '80%', content: 'FastAPI' },
+    { title: '前端开发', score: '95%', content: 'React' },
+  ]
+  for (const [index, skill] of expected.entries()) {
+    const item = skills.nth(index)
+    await expect(item.locator('.skill-score')).toHaveText(skill.score)
+    await expect(item.locator('summary')).toContainText(skill.title)
+    await item.locator('.skill-gauge').click()
+    await expect(item.locator('.scan-detail')).toBeVisible()
+    await expect(item.locator('.scan-detail')).toContainText(skill.content)
+    await item.locator('summary').focus()
+    await page.keyboard.press('Enter')
+    await expect(item.locator('.scan-detail')).toBeHidden()
+  }
+  await page.setViewportSize({ width: 320, height: 844 })
+  await skills.first().locator('summary').click()
+  await expect(skills.first().locator('.scan-detail')).toBeVisible()
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
   await expect(page).toHaveURL('http://127.0.0.1:5180/')
   expect(state.exceptions).toEqual([])
 })

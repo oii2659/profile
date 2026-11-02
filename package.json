@@ -14,6 +14,8 @@
     "check:functions": "npx --yes --package=deno deno check --config supabase/functions/deno.json supabase/functions/resume-source/index.ts"
   },
   "dependencies": {
+    "@fontsource-variable/noto-sans-sc": "^5.3.1",
+    "@fontsource-variable/oswald": "^5.3.0",
     "@supabase/supabase-js": "^2.118.0",
     "@tiptap/core": "^3.32.1",
     "@tiptap/starter-kit": "^3.32.1",
