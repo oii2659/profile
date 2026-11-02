@@ -9,7 +9,7 @@ function skillScore(title: string): number | undefined {
   return (proficiency as Record<string, number>)[title]
 }
 function skillTitle(title: string) {
-  return title === 'Agent 开发' ? 'Agent 开发（设计）' : title
+  return title === 'Agent 开发' ? 'Agent 开发' : title
 }
 </script>
 
