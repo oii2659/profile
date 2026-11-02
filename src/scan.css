@@ -36,12 +36,13 @@
   .scan-toggle { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 32px; width: 32px; height: 32px; border: 1px solid #cfcfcf; border-radius: 50%; background: #fff; color: #555; transition: background-color .18s, border-color .18s, color .18s; }
   .scan-toggle svg { width: 16px; height: 16px; }
   .scan-toggle-vertical { transform-origin: 10px 10px; transition: transform .18s ease, opacity .18s ease; }
-  .resume-main .scan-item { margin-bottom: 14px; }
+  .resume-main .scan-item { margin: 0 -10px 14px; padding: 0 10px; border-radius: 6px; transition: background-color .18s; }
   .resume-main .scan-item > summary { margin-left: -10px; margin-right: -10px; padding: 10px; border-radius: 6px; transition: background-color .18s; }
-  .resume-main .scan-item[open] > summary, .resume-main .scan-item > summary:focus-visible { background: #f5f5f5; }
+  .resume-main .scan-item[open], .resume-main .scan-item > summary:focus-visible { background: #f5f5f5; }
   .scan-item > summary:focus-visible .scan-toggle, .scan-item[open] > summary .scan-toggle { background: #333; border-color: #333; color: #fff; }
   .scan-item[open] .scan-toggle-vertical { transform: scaleY(0); opacity: 0; }
-  .resume-main .scan-item[open] > .scan-detail { margin-top: 14px; padding-top: 12px; border-top: 1px solid #e5e5e5; }
+  .resume-main .scan-item[open] > .scan-detail { margin: 0; padding: 0 0 14px; border: 0; }
+  .resume-main .scan-item[open] > summary > :is(.scan-teaser, .scan-flow, .scan-keywords) { display: none; }
   .scan-item > summary > time { display: block; margin-bottom: 4px; color: #444; font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; }
   .scan-teaser { display: block; margin-top: 5px; color: #737373; font-size: 13px; line-height: 1.9; }
   .scan-keywords { display: flex; flex-wrap: wrap; gap: 5px 11px; margin-top: 8px; color: #777; font-size: 11px; }
@@ -52,7 +53,7 @@
   .scan-detail > .project-heading, .scan-detail > .project-label, .scan-detail > h3 { display: none; }
   .scan-detail .github { overflow-wrap: anywhere; }
   .scan-experience .scan-items, .scan-projects .scan-items { margin-left: 5px; padding-left: 19px; border-left: 1px solid #c9c9c9; }
-  .scan-experience .scan-item::before, .scan-projects .scan-item::before { content: ''; position: absolute; left: -24px; top: 18px; width: 9px; height: 9px; background: #303030; border-radius: 50%; }
+  .scan-experience .scan-item::before, .scan-projects .scan-item::before { content: ''; position: absolute; left: -14px; top: 18px; width: 9px; height: 9px; background: #303030; border-radius: 50%; }
   .public-site .scan-lead .job-heading { display: flex; flex-direction: column; gap: 3px; margin: 0 0 18px; font-size: 13px; }
   .public-site .scan-lead .job-heading time { order: -1; color: #4b4b4b; font-size: 12px; font-weight: 600; }
   .resume-main .scan-item:last-child { margin-bottom: 0; }
@@ -154,6 +155,6 @@
   .resume-main .scan-item > summary:hover .scan-toggle { background: #333; border-color: #333; color: #fff; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .scan-toggle, .scan-toggle-vertical, .resume-main .scan-item > summary, .skill-gauge { transition: none; }
+  .scan-toggle, .scan-toggle-vertical, .resume-main .scan-item, .resume-main .scan-item > summary, .skill-gauge { transition: none; }
 }
 @media print { .scan-resume { display: none; } }

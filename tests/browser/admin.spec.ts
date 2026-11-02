@@ -235,12 +235,21 @@ test('scan view keeps full content and updates project details from the source',
     if (await item.getAttribute('open') === null) await item.locator('summary').click()
   }
   await expect(page.locator('.scan-item[open]')).toHaveCount(await page.locator('.scan-item').count())
+  for (const item of await page.locator('.scan-item').all()) {
+    for (const preview of await item.locator('summary > .scan-teaser, summary > .scan-flow, summary > .scan-keywords').all()) {
+      await expect(preview).toBeHidden()
+    }
+  }
+  const robot = page.locator('.scan-item').filter({ has: page.locator('summary', { hasText: 'STEMM 智能机器人小程序' }) })
+  expect((await robot.innerText()).match(/基于 uni-app 开发的陪伴型机器人配套微信小程序/g)).toHaveLength(1)
+  await expect(robot.locator('.scan-detail')).toContainText('约 8 秒降至约 3 秒')
   const fullLength = await page.locator('.scan-resume').innerText().then(text => text.length)
   expect(compactLength).toBeLessThan(fullLength * .5)
   const circuit = page.locator('.scan-item').filter({ has: page.locator('summary', { hasText: 'Circuit Muse' }) })
   await expect(circuit.locator('.scan-detail')).toContainText('WebSerial')
   for (const item of await page.locator('.scan-item').all()) await item.locator('summary').click()
   await expect(page.locator('.scan-item[open]')).toHaveCount(0)
+  await expect(robot.locator('.scan-teaser')).toBeVisible()
   // Details can be reopened without changing the public URL.
   await page.locator('.scan-item').filter({ has: page.locator('summary', { hasText: '春晓服装工序生成系统' }) }).locator('summary').click()
   await expect(page.locator('.scan-item[open]')).toHaveCount(1)
