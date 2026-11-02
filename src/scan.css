@@ -1,6 +1,7 @@
 /* Reference-inspired monochrome resume. Print remains a separate document. */
 @media screen {
   .print-resume { display: none; }
+  .mobile-contact { display: none; }
   .scan-resume { overflow: hidden; border: 1px solid #d8d8d8; border-radius: 4px; background: #fff; box-shadow: 0 8px 32px #00000006; }
   .scan-header { position: relative; isolation: isolate; overflow: hidden; min-height: 220px; padding: 108px 46px 32px; background: #292929; color: #fff; }
   .resume-watermark { position: absolute; z-index: -1; top: -15px; left: 28px; color: #3b3b3b; font-family: 'Oswald Variable', 'Arial Narrow', sans-serif; font-size: clamp(90px, 10.8vw, 150px); line-height: 1.1; font-weight: 500; letter-spacing: -.04em; white-space: nowrap; user-select: none; }
@@ -93,27 +94,49 @@
   .scan-skills .scan-items { column-gap: 10px; }
   .skill-gauge { flex-basis: 76px; width: 76px; height: 76px; }
 }
-@media screen and (max-width: 650px) {
+@media screen and (max-width: 820px) {
   .scan-resume { border-left: 0; border-right: 0; border-radius: 0; }
-  .scan-header { min-height: 180px; padding: 80px 24px 25px; }
-  .resume-watermark { top: 4px; left: 13px; font-size: 78px; }
+  .scan-header { min-height: 0; padding: 66px 24px 24px; }
+  .resume-watermark { top: 2px; left: 20px; font-size: clamp(38px, 10vw, 76px); letter-spacing: -.03em; }
   .scan-header h1 { font-size: 30px; }
-  .scan-intro { max-width: 100%; font-size: 11px; }
+  .scan-intro { max-width: 100%; font-size: 14px; }
+  .mobile-contact { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-top: 16px; }
+  .mobile-contact a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; border: 1px solid #626262; border-radius: 5px; color: #f1f1f1; font-size: 13px; }
+  .mobile-contact a:hover { background: #414141; text-decoration: none; }
   .header-caption { display: none; }
   .resume-columns { grid-template-columns: 1fr; }
-  .resume-main { padding: 27px 24px 32px; }
+  .resume-main { padding: 28px 24px 32px; }
   .resume-sidebar { padding: 28px 24px 32px; }
-  .scan-section > h2 { font-size: 15px; }
+  .scan-section > h2 { font-size: 17px; }
   .scan-section > h2 > span { padding: 4px 12px; }
-  .scan-item-title { font-size: 13px; }
-  .scan-teaser { font-size: 12px; }
-  .scan-detail { font-size: 12px; }
-  .education-heading { flex-direction: column; gap: 4px; font-size: 12px; }
+  .scan-item-title { font-size: 16px; }
+  .scan-teaser { font-size: 15px; line-height: 1.85; color: #606060; }
+  .scan-detail, .resume-sidebar .scan-detail { font-size: 15px; line-height: 1.85; }
+  .scan-toggle { flex-basis: 44px; width: 44px; height: 44px; }
+  .scan-toggle svg { width: 18px; height: 18px; }
+  .scan-item-heading { align-items: center; }
+  .scan-keywords, .scan-flow { font-size: 12px; }
+  .scan-item > summary > time { font-size: 13px; }
+  .education-heading { flex-direction: column; gap: 4px; font-size: 14px; }
+  .education-entry, .education-details { font-size: 14px; }
+  .public-site .scan-lead .job-heading { font-size: 15px; }
+  .public-site .scan-lead .job-heading time { font-size: 13px; }
   .scan-skills .scan-items { gap: 26px 22px; }
   .skill-gauge { flex-basis: 94px; width: 94px; height: 94px; }
-  .scan-skills .scan-item-title { font-size: 12px; }
-  .scan-about { font-size: 13px; }
-  .profile-details { font-size: 13px; }
+  .scan-skills .scan-item-title { font-size: 14px; }
+  .scan-skills .scan-item[open] .scan-item-title { font-size: 14px; }
+  .skill-hint { font-size: 12px; }
+  .scan-about { font-size: 15px; line-height: 1.9; color: #626262; }
+  .profile-details { font-size: 14px; gap: 6px; }
+  .profile-details a { display: inline-flex; align-items: center; min-height: 44px; }
+  .profile-details > div { min-height: 36px; }
+  .public-site .resume-content .stack, .public-site .github { font-size: 13px; }
+}
+@media screen and (max-width: 360px) {
+  .resume-main, .resume-sidebar { padding-left: 18px; padding-right: 18px; }
+  .scan-header { padding-left: 18px; padding-right: 18px; }
+  .mobile-contact { gap: 8px; }
+  .mobile-contact a { padding: 0 10px; }
 }
 @media screen and (hover: hover) {
   .resume-main .scan-item > summary:hover { background: #f5f5f5; }

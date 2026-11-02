@@ -32,6 +32,10 @@ defineExpose({ reveal })
       <span class="resume-watermark" aria-hidden="true">Personal resume</span>
       <h1>{{ document.profile.name }}</h1>
       <p class="scan-intro">{{ model.introduction }}</p>
+      <div class="mobile-contact" aria-label="快捷联系方式">
+        <a :href="'mailto:' + document.profile.email"><ResumeIcon name="mail" />邮件联系</a>
+        <a :href="'tel:' + document.profile.phone"><ResumeIcon name="phone" />{{ document.profile.phone }}</a>
+      </div>
       <span class="header-caption" aria-hidden="true">个人简历</span>
     </header>
     <div class="resume-columns">

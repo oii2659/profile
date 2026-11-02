@@ -140,6 +140,36 @@ test('old public links become clean URLs while admin routing remains available',
   await expect(page).toHaveURL('http://127.0.0.1:5180/admin')
 })
 
+test('mobile first visit stays readable with unavailable fonts and desktop keeps two columns', async ({ page }) => {
+  const state = await setup(page)
+  await page.route(/\.(?:woff2?|ttf)(?:\?.*)?$/, route => route.abort())
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/')
+  await expect(page.locator('.scan-header h1')).toHaveText(source.profile.name)
+  await expect(page.locator('.mobile-contact')).toBeVisible()
+  await expect(page.locator('.mobile-contact a').first()).toHaveAttribute('href', 'mailto:' + source.profile.email)
+  for (const width of [320, 360, 390, 430, 650, 768, 820, 900, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 844 })
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+    const columns = await page.locator('.resume-columns').evaluate(el => getComputedStyle(el).gridTemplateColumns.split(' ').length)
+    expect(columns).toBe(width <= 820 ? 1 : 2)
+    if (width <= 820) {
+      expect(await page.locator('.scan-teaser').first().evaluate(el => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(15)
+      expect((await page.locator('.scan-toggle').first().boundingBox())!.width).toBeGreaterThanOrEqual(44)
+      expect(await page.locator('.guestbook textarea').evaluate(el => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(16)
+      const watermark = await page.locator('.resume-watermark').boundingBox()
+      const header = await page.locator('.scan-header').boundingBox()
+      expect(watermark!.x + watermark!.width).toBeLessThanOrEqual(header!.x + header!.width)
+    }
+  }
+  await page.setViewportSize({ width: 320, height: 844 })
+  const project = page.locator('.scan-experience .scan-item').first()
+  await project.locator('.scan-toggle').click()
+  await expect(project.locator('.scan-detail')).toBeVisible()
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+  expect(state.exceptions).toEqual([])
+})
+
 test('simple guestbook retains failed drafts, publishes and loads additional comments', async ({ page }) => {
   const state = await setup(page)
   state.messages = Array.from({ length: 10 }, (_, i) => ({ id: i + 1, content: '留言 ' + (i + 1), created_at: '2026-10-30T01:00:00Z', hidden: false }))
@@ -232,7 +262,7 @@ test('skill circles show self-assessments and reveal matching details by mouse a
   await expect(page.locator('.scan-header img')).toHaveCount(0)
   const skills = page.locator('.scan-skills .scan-item')
   const expected = [
-    { title: 'Agent 开发（设计）', score: '85%', content: 'LangGraph' },
+    { title: 'Agent 开发', score: '85%', content: 'LangGraph' },
     { title: 'Agent 系统工程', score: '85%', content: '上下文隔离' },
     { title: '后端开发', score: '80%', content: 'FastAPI' },
     { title: '前端开发', score: '95%', content: 'React' },
