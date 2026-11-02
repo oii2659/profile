@@ -3,7 +3,7 @@ import type { ReadingSection } from '../lib/reading'
 import SkillList from './SkillList.vue'
 
 defineProps<{ section: ReadingSection; expanded: Set<string>; overviewContent?: Record<string, string> }>()
-const emit = defineEmits<{ toggle: [id: string, event: Event]; selectSkill: [id: string] }>()
+const emit = defineEmits<{ toggle: [id: string, event: Event] }>()
 </script>
 
 <template>
@@ -14,7 +14,7 @@ const emit = defineEmits<{ toggle: [id: string, event: Event]; selectSkill: [id:
     <template v-if="section.kind === 'overview'">
       <div v-for="item in section.items" :id="item.id" :key="item.id" class="resume-content scan-about" v-html="overviewContent?.[item.id] ?? item.html" />
     </template>
-    <SkillList v-else-if="section.kind === 'skills'" :items="section.items" :expanded="expanded" @select="emit('selectSkill', $event)" />
+    <SkillList v-else-if="section.kind === 'skills'" :items="section.items" :expanded="expanded" @toggle="(id, event) => emit('toggle', id, event)" />
     <div v-else class="scan-items">
       <details v-for="item in section.items" :id="item.id" :key="item.id" :open="expanded.has(item.id)" class="scan-item" @toggle="emit('toggle', item.id, $event)">
         <summary :aria-label="item.title + '，' + (expanded.has(item.id) ? '收起详情' : '展开详情')">

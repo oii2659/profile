@@ -11,14 +11,6 @@ const mainSections = computed(() => model.value.sections.filter(section => !['ov
 const sideSections = computed(() => model.value.sections.filter(section => ['overview', 'skills'].includes(section.kind)))
 const root = ref<HTMLElement>()
 const expanded = ref(new Set<string>())
-function selectSkill(id: string) {
-  const next = new Set(expanded.value)
-  for (const section of model.value.sections.filter(section => section.kind === 'skills')) {
-    for (const item of section.items) next.delete(item.id)
-  }
-  if (!expanded.value.has(id)) next.add(id)
-  expanded.value = next
-}
 function toggled(id: string, event: Event) {
   const next = new Set(expanded.value)
   if ((event.target as HTMLDetailsElement).open) next.add(id)
@@ -71,7 +63,7 @@ defineExpose({ reveal })
             <div><dt><ResumeIcon name="mail" /><span class="visually-hidden">邮箱</span></dt><dd><a :href="'mailto:' + document.profile.email">{{ document.profile.email }}</a></dd></div>
           </dl>
         </section>
-        <ReadingSection v-for="section in sideSections" :key="section.id" :section="section" :expanded="expanded" :overview-content="model.overviewContent" @toggle="toggled" @select-skill="selectSkill" />
+        <ReadingSection v-for="section in sideSections" :key="section.id" :section="section" :expanded="expanded" :overview-content="model.overviewContent" @toggle="toggled" />
       </aside>
     </div>
   </main>

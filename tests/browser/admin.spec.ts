@@ -265,7 +265,7 @@ test('skill circles show self-assessments and reveal matching details by mouse a
   const state = await setup(page)
   await page.goto('/')
   await expect(page.locator('.scan-header img')).toHaveCount(0)
-  const skills = page.locator('.skill-option')
+  const skills = page.locator('.skill-item')
   const expected = [
     { title: 'Agent 开发', score: '85%', content: 'LangGraph' },
     { title: 'Agent 系统工程', score: '85%', content: '上下文隔离' },
@@ -275,68 +275,33 @@ test('skill circles show self-assessments and reveal matching details by mouse a
   for (const [index, skill] of expected.entries()) {
     const item = skills.nth(index)
     await expect(item.locator('.skill-score')).toHaveText(skill.score)
-    await expect(item).toContainText(skill.title)
-    const panel = page.locator('#' + await item.getAttribute('aria-controls'))
-    const before = await item.boundingBox()
+    await expect(item.locator('summary')).toContainText(skill.title)
     await item.locator('.skill-gauge').click()
-    await expect(item).toHaveAttribute('aria-expanded', 'true')
-    await expect(panel).toBeVisible()
-    await expect(panel).toContainText(skill.content)
-    expect((await item.boundingBox())!.width).toBe(before!.width)
-    await item.focus()
+    await expect(item.locator('.scan-detail')).toBeVisible()
+    await expect(item.locator('.scan-detail')).toContainText(skill.content)
+    const positions = await item.evaluate(el => {
+      const summary = el.querySelector('summary')!.getBoundingClientRect()
+      const detail = el.querySelector('.scan-detail')!.getBoundingClientRect()
+      return { gap: detail.top - summary.bottom, width: el.getBoundingClientRect().width, gridWidth: el.parentElement!.getBoundingClientRect().width }
+    })
+    expect(positions.gap).toBeGreaterThanOrEqual(0)
+    expect(positions.gap).toBeLessThanOrEqual(12)
+    expect(positions.width).toBe(positions.gridWidth)
+    expect(await item.locator('summary').evaluate(el => getComputedStyle(el).webkitTapHighlightColor)).toBe('rgba(0, 0, 0, 0)')
+    await item.locator('summary').focus()
     await page.keyboard.press('Enter')
-    await expect(panel).toBeHidden()
+    await expect(item.locator('.scan-detail')).toBeHidden()
   }
   await page.setViewportSize({ width: 320, height: 844 })
-  await skills.first().click()
-  await expect(page.locator('.skill-panel.is-open')).toBeVisible()
-  await skills.nth(1).click()
-  await expect(skills.first()).toHaveAttribute('aria-expanded', 'false')
-  await expect(skills.nth(1)).toHaveAttribute('aria-expanded', 'true')
-  await expect(page.locator('.skill-panel.is-open')).toHaveCount(1)
-  expect(await skills.first().evaluate(el => getComputedStyle(el).getPropertyValue('-webkit-tap-highlight-color'))).toBe('rgba(0, 0, 0, 0)')
+  await skills.first().locator('summary').click()
+  await expect(skills.first().locator('.scan-detail')).toBeVisible()
+  expect(await skills.first().locator('summary').evaluate(el => getComputedStyle(el).outlineStyle)).toBe('none')
+  await skills.nth(1).locator('summary').click()
+  await expect(skills.nth(1).locator('.scan-detail')).toBeVisible()
+  await expect(skills.first().locator('.scan-detail')).toBeVisible()
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
   await expect(page).toHaveURL('http://127.0.0.1:5180/')
   expect(state.exceptions).toEqual([])
-})
-
-test('skill details open beside their row and stay visible after switching', async ({ page }) => {
-  await setup(page)
-  await page.setViewportSize({ width: 320, height: 844 })
-  await page.goto('/')
-  const skills = page.locator('.skill-option')
-  const title = page.locator('.skill-panel.is-open .skill-panel-title')
-  for (const motion of ['no-preference', 'reduce'] as const) {
-    await page.emulateMedia({ reducedMotion: motion })
-    for (const index of [0, 2, 1, 3]) {
-      // Start with the chosen circle near the bottom of the screen.
-      await skills.nth(index).evaluate(el => window.scrollBy({ top: el.getBoundingClientRect().bottom - innerHeight + 30, behavior: 'instant' }))
-      await skills.nth(index).click()
-      await expect(title).toHaveText(['Agent 开发', 'Agent 系统工程', '后端开发', '前端开发'][index]!)
-      await expect.poll(async () => {
-        const bounds = (await title.boundingBox())!
-        return bounds.y >= 19 && bounds.y + bounds.height + 120 <= 844
-      }).toBe(true)
-      const panel = (await page.locator('.skill-panel.is-open').boundingBox())!
-      const options = (await page.locator('.skill-options').nth(Math.floor(index / 2)).boundingBox())!
-      await expect.poll(async () => (await skills.nth(index).boundingBox())!.y).toBeGreaterThanOrEqual(19)
-      expect(panel.y).toBeGreaterThanOrEqual(options.y + options.height - 1)
-      if (index < 2) {
-        const nextRow = (await skills.nth(2).boundingBox())!
-        expect(panel.y + panel.height).toBeLessThanOrEqual(nextRow.y)
-      }
-      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
-    }
-    await skills.nth(3).click()
-    await expect(page.locator('.skill-panel.is-open')).toHaveCount(0)
-  }
-  // Rapid selection should only reveal the latest panel.
-  await page.emulateMedia({ reducedMotion: 'no-preference' })
-  await skills.evaluateAll(elements => {
-    for (const index of [0, 2, 1, 3]) (elements[index] as HTMLButtonElement).click()
-  })
-  await expect(page.locator('.skill-panel.is-open')).toHaveCount(1)
-  await expect(title).toHaveText('前端开发')
 })
 
 test('editing preserves existing content, posts source version, and distinguishes commit from deployment', async ({ page }) => {
