@@ -72,6 +72,7 @@
   .skill-score { color: #e7e7e7; font-size: 19px; font-weight: 400; font-variant-numeric: tabular-nums; }
   .skill-score small { margin-left: 1px; font-size: 11px; }
   .skill-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 14px; align-items: start; }
+  .skill-row + .skill-row { margin-top: 24px; }
   .skill-option { display: flex; flex-direction: column; align-items: center; gap: 10px; min-width: 0; padding: 0; border: 0; border-radius: 0; background: transparent; color: inherit; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
   .skill-option:hover { background: transparent; }
   .skill-option:focus { outline: none; }
@@ -83,7 +84,7 @@
   .skill-panel { display: grid; grid-template-rows: 0fr; opacity: 0; visibility: hidden; transition: grid-template-rows .26s ease, opacity .2s ease, visibility .26s; }
   .skill-panel.is-open { grid-template-rows: 1fr; opacity: 1; visibility: visible; }
   .skill-panel-clip { min-height: 0; overflow: hidden; }
-  .skill-panel-body { margin-top: 22px; padding: 16px 0 0; border-top: 1px solid #d3d3d3; }
+  .skill-panel-body { margin-top: 18px; padding: 16px; border: 1px solid #dedede; border-radius: 6px; background: #fafafa; }
   .skill-panel-title { color: #333; font-size: 13px; font-weight: 600; }
   .skill-panel .scan-detail { padding: 4px 0 0; }
 }
@@ -104,9 +105,15 @@
   .resume-watermark { top: 2px; left: 20px; font-size: clamp(38px, 10vw, 76px); letter-spacing: -.03em; }
   .scan-header h1 { font-size: 30px; }
   .scan-intro { max-width: 100%; font-size: 14px; }
-  .mobile-contact { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-top: 16px; }
-  .mobile-contact a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; border: 1px solid #626262; border-radius: 5px; color: #f1f1f1; font-size: 13px; }
-  .mobile-contact a:hover { background: #414141; text-decoration: none; }
+  .mobile-contact { display: grid; margin-top: 22px; padding-top: 10px; border-top: 1px solid #ffffff26; }
+  .mobile-contact a { display: grid; grid-template-columns: 18px 28px minmax(0, 1fr) 12px; align-items: center; gap: 10px; min-height: 48px; padding: 8px 0; color: #f1f1f1; font-size: 14px; -webkit-tap-highlight-color: transparent; }
+  .mobile-contact a > .resume-icon { color: #aaa; font-size: 16px; }
+  .contact-label { color: #bdbdbd; font-size: 12px; }
+  .contact-value { min-width: 0; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+  .contact-arrow { color: #aaa; font-size: 14px; }
+  .mobile-contact a:hover { color: #fff; text-decoration: none; }
+  .mobile-contact a:active { opacity: .7; }
+  .mobile-contact a:focus-visible { outline: 1px solid #bbb; outline-offset: 3px; border-radius: 3px; }
   .header-caption { display: none; }
   .resume-columns { grid-template-columns: 1fr; }
   .resume-main { padding: 28px 24px 32px; }
@@ -137,8 +144,7 @@
 @media screen and (max-width: 360px) {
   .resume-main, .resume-sidebar { padding-left: 18px; padding-right: 18px; }
   .scan-header { padding-left: 18px; padding-right: 18px; }
-  .mobile-contact { gap: 8px; }
-  .mobile-contact a { padding: 0 10px; }
+  .mobile-contact a { gap: 8px; }
 }
 @media screen and (hover: hover) {
   .skill-option:hover .skill-gauge { transform: translateY(-2px); }

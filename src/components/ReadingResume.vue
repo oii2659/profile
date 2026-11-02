@@ -41,8 +41,8 @@ defineExpose({ reveal })
       <h1>{{ document.profile.name }}</h1>
       <p class="scan-intro">{{ model.introduction }}</p>
       <div class="mobile-contact" aria-label="快捷联系方式">
-        <a :href="'mailto:' + document.profile.email"><ResumeIcon name="mail" />邮件联系</a>
-        <a :href="'tel:' + document.profile.phone"><ResumeIcon name="phone" />{{ document.profile.phone }}</a>
+        <a :href="'mailto:' + document.profile.email"><ResumeIcon name="mail" /><span class="contact-label">邮箱</span><span class="contact-value">{{ document.profile.email }}</span><span class="contact-arrow" aria-hidden="true">↗</span></a>
+        <a :href="'tel:' + document.profile.phone"><ResumeIcon name="phone" /><span class="contact-label">电话</span><span class="contact-value">{{ document.profile.phone }}</span><span class="contact-arrow" aria-hidden="true">↗</span></a>
       </div>
       <span class="header-caption" aria-hidden="true">个人简历</span>
     </header>

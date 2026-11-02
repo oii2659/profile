@@ -154,6 +154,11 @@ test('mobile first visit stays readable with unavailable fonts and desktop keeps
     const columns = await page.locator('.resume-columns').evaluate(el => getComputedStyle(el).gridTemplateColumns.split(' ').length)
     expect(columns).toBe(width <= 820 ? 1 : 2)
     if (width <= 820) {
+      await expect(page.locator('.mobile-contact .contact-value').first()).toHaveText(source.profile.email)
+      await expect(page.locator('.mobile-contact .contact-value').last()).toHaveText(source.profile.phone)
+      for (const value of await page.locator('.mobile-contact .contact-value').all()) {
+        expect(await value.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true)
+      }
       expect(await page.locator('.scan-teaser').first().evaluate(el => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(15)
       expect((await page.locator('.scan-toggle').first().boundingBox())!.width).toBeGreaterThanOrEqual(44)
       expect(await page.locator('.guestbook textarea').evaluate(el => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(16)
@@ -293,6 +298,45 @@ test('skill circles show self-assessments and reveal matching details by mouse a
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
   await expect(page).toHaveURL('http://127.0.0.1:5180/')
   expect(state.exceptions).toEqual([])
+})
+
+test('skill details open beside their row and stay visible after switching', async ({ page }) => {
+  await setup(page)
+  await page.setViewportSize({ width: 320, height: 844 })
+  await page.goto('/')
+  const skills = page.locator('.skill-option')
+  const title = page.locator('.skill-panel.is-open .skill-panel-title')
+  for (const motion of ['no-preference', 'reduce'] as const) {
+    await page.emulateMedia({ reducedMotion: motion })
+    for (const index of [0, 2, 1, 3]) {
+      // Start with the chosen circle near the bottom of the screen.
+      await skills.nth(index).evaluate(el => window.scrollBy({ top: el.getBoundingClientRect().bottom - innerHeight + 30, behavior: 'instant' }))
+      await skills.nth(index).click()
+      await expect(title).toHaveText(['Agent 开发', 'Agent 系统工程', '后端开发', '前端开发'][index]!)
+      await expect.poll(async () => {
+        const bounds = (await title.boundingBox())!
+        return bounds.y >= 19 && bounds.y + bounds.height + 120 <= 844
+      }).toBe(true)
+      const panel = (await page.locator('.skill-panel.is-open').boundingBox())!
+      const options = (await page.locator('.skill-options').nth(Math.floor(index / 2)).boundingBox())!
+      await expect.poll(async () => (await skills.nth(index).boundingBox())!.y).toBeGreaterThanOrEqual(19)
+      expect(panel.y).toBeGreaterThanOrEqual(options.y + options.height - 1)
+      if (index < 2) {
+        const nextRow = (await skills.nth(2).boundingBox())!
+        expect(panel.y + panel.height).toBeLessThanOrEqual(nextRow.y)
+      }
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+    }
+    await skills.nth(3).click()
+    await expect(page.locator('.skill-panel.is-open')).toHaveCount(0)
+  }
+  // Rapid selection should only reveal the latest panel.
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await skills.evaluateAll(elements => {
+    for (const index of [0, 2, 1, 3]) (elements[index] as HTMLButtonElement).click()
+  })
+  await expect(page.locator('.skill-panel.is-open')).toHaveCount(1)
+  await expect(title).toHaveText('前端开发')
 })
 
 test('editing preserves existing content, posts source version, and distinguishes commit from deployment', async ({ page }) => {
