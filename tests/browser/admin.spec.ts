@@ -132,7 +132,8 @@ test('print choices preserve the compact version and open a complete design prev
   for (const detail of await preview.locator('.scan-detail').all()) await expect(detail).toBeVisible()
   await preview.evaluate(() => document.fonts.ready)
   await fs.mkdir('.artifacts', { recursive: true })
-  await preview.pdf({ path: '.artifacts/resume-design.pdf', preferCSSPageSize: true, printBackground: true })
+  // Exercise the browser's default headers too: the design must suppress them.
+  await preview.pdf({ path: '.artifacts/resume-design.pdf', preferCSSPageSize: true, printBackground: true, displayHeaderFooter: true })
   const pdf = await fs.readFile('.artifacts/resume-design.pdf')
   expect(pdf.toString('latin1').match(/\/Type\s*\/Page\b/g)).toHaveLength(3)
   await preview.close()

@@ -17,6 +17,13 @@
   @page {
     size: A4;
     margin: 10mm;
+    /* Override Chromium's automatic date, title, URL and page counters. */
+    @top-left { content: ''; }
+    @top-center { content: ''; }
+    @top-right { content: ''; }
+    @bottom-left { content: ''; }
+    @bottom-center { content: ''; }
+    @bottom-right { content: ''; }
   }
   html, body { background: #fff; }
   .design-print { background: #fff; padding: 0; min-height: 0; print-color-adjust: exact; -webkit-print-color-adjust: exact; }

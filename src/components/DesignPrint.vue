@@ -90,7 +90,7 @@ async function print() {
   <component :is="'style'">{{ styles }}</component>
   <div class="public-site design-print" :class="{ 'is-image-export': imageExport }">
     <nav v-if="!imageExport" class="toolbar design-print-toolbar" aria-label="设计版打印操作">
-      <div><strong>设计版 · 全部展开</strong><p>长图无分页、日期或页码。打印 PDF 请在“更多设置”中取消“页眉和页脚”，并开启“背景图形”。</p><p v-if="exportError" class="export-error" role="alert">{{ exportError }}</p></div>
+      <div><strong>设计版 · 全部展开</strong><p>PDF 已隐藏日期、网址和页码；打印时开启“背景图形”可保留蓝色设计。若浏览器仍显示附加文字，请取消“页眉和页脚”。</p><p v-if="exportError" class="export-error" role="alert">{{ exportError }}</p></div>
       <div class="toolbar-actions"><a href="/">返回简历</a><button type="button" :disabled="exporting" @click="exportImage">{{ exporting ? '正在生成长图…' : '导出长图 PNG' }}</button><button type="button" :disabled="preparing" @click="print">{{ preparing ? '准备打印…' : '打印 / 保存 PDF' }}</button></div>
     </nav>
     <div class="reading-layout"><ReadingResume :document="publishedResume" expand-all /></div>
