@@ -1,0 +1,11 @@
+.print-dialog { width: min(460px, calc(100% - 32px)); margin: auto; padding: 24px; color: #233b5b; background: #fcfdff; border: 1px solid #d6e0ed; border-radius: 14px; font: 14px/1.7 var(--resume-reading-font); box-shadow: 0 24px 80px #142e5233; }
+.print-dialog::backdrop { background: #142e5266; }
+.print-dialog-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+.print-dialog-heading h2 { margin: 0; padding: 0; border: 0; font-size: 19px; }
+.print-dialog-heading button { width: 44px; height: 44px; padding: 0; background: transparent; border: 0; font-size: 24px; }
+.print-dialog .print-choice { display: flex; flex-direction: column; gap: 5px; width: 100%; padding: 16px; text-align: left; border: 1px solid #d6e0ed; background: #f3f7fd; color: #233b5b; }
+.print-dialog .print-choice + .print-choice { margin-top: 12px; }
+.print-dialog .print-choice span { color: #52647a; font-size: 13px; }
+.print-dialog .print-choice:hover { border-color: #83a9cf; background: #eaf2fc; }
+.print-dialog button:focus-visible { outline: 2px solid #356bac; outline-offset: 3px; }
+@media print { .print-dialog { display: none !important; } }

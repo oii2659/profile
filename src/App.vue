@@ -7,6 +7,9 @@ import ResumeIcon from './components/ResumeIcon.vue'
 import { publishedResume } from './lib/resume'
 import { recordVisit } from './lib/analytics'
 const AdminApp = defineAsyncComponent(() => import('./admin/AdminApp.vue'))
+const DesignPrint = defineAsyncComponent(() => import('./components/DesignPrint.vue'))
+const isDesignPrint = new URLSearchParams(window.location.search).get('print') === 'design'
+const printDialog = ref<HTMLDialogElement>()
 const adminPath = '/admin'
 const matchesAdminRoute = () => /^\/admin(?:\/|\/index\.html)?$/.test(window.location.pathname) || window.location.hash === '#/admin'
 const isAdmin = ref(matchesAdminRoute())
@@ -39,22 +42,37 @@ onMounted(() => {
   window.addEventListener('hashchange', routeChanged)
   window.addEventListener('popstate', routeChanged)
   void cleanPublicUrl()
-  if (!isAdmin.value) void recordVisit()
+  if (!isAdmin.value && !isDesignPrint) void recordVisit()
 })
 onBeforeUnmount(() => {
   window.removeEventListener('hashchange', routeChanged)
   window.removeEventListener('popstate', routeChanged)
 })
-const printResume = () => window.print()
+async function printResume() {
+  printDialog.value?.close()
+  await nextTick()
+  await document.fonts.ready
+  window.print()
+}
+function previewDesign() {
+  printDialog.value?.close()
+  window.open('/?print=design', '_blank', 'noopener')
+}
 </script>
 
 <template>
   <AdminApp v-if="isAdmin" />
+  <DesignPrint v-else-if="isDesignPrint" />
   <div v-else class="public-site">
     <nav class="toolbar" aria-label="简历操作">
       <span>{{ publishedResume.profile.name }} · 个人简历</span>
-      <div class="toolbar-actions"><button class="section-link" type="button" @click="scrollToSection('guestbook')"><ResumeIcon name="message" />留言</button><button type="button" @click="printResume"><ResumeIcon name="download" />打印 / 保存 PDF</button></div>
+      <div class="toolbar-actions"><button class="section-link" type="button" @click="scrollToSection('guestbook')"><ResumeIcon name="message" />留言</button><button type="button" @click="printDialog?.showModal()"><ResumeIcon name="download" />打印 / 保存 PDF</button></div>
     </nav>
+    <dialog ref="printDialog" class="print-dialog" aria-labelledby="print-dialog-title" @click="event => { if (event.target === printDialog) printDialog?.close() }">
+      <div class="print-dialog-heading"><h2 id="print-dialog-title">选择打印样式</h2><button type="button" aria-label="关闭打印选项" @click="printDialog?.close()">×</button></div>
+      <button class="print-choice" type="button" @click="printResume"><strong>简洁版 · A4 双页</strong><span>紧凑排版，适合投递和黑白打印。</span></button>
+      <button class="print-choice" type="button" @click="previewDesign"><strong>设计版 · 全部展开</strong><span>蓝色双栏样式，完整展示项目与技能。先预览，再打印。</span></button>
+    </dialog>
     <div class="reading-layout">
       <div class="reading-column">
         <ReadingResume ref="readingView" :document="publishedResume" />

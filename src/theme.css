@@ -1,0 +1,94 @@
+/* Screen-only palette; the printable resume keeps its own ink and paper. */
+@media screen {
+  .public-site {
+    --ink: #233b5b;
+    --body-ink: #52647a;
+    --muted-ink: #61738a;
+    --accent: #356bac;
+    --accent-dark: #234e82;
+    --highlight: #779ec6;
+    --line: #d6e0ed;
+    --paper: #fcfdff;
+    --wash: #edf3fb;
+    --reading-blue: var(--accent);
+    color: var(--body-ink);
+    background:
+      radial-gradient(ellipse 65% 600px at 0 0, #b5cfee80, transparent),
+      radial-gradient(ellipse 55% 700px at 100% 220px, #c9c9ed66, transparent),
+      radial-gradient(#6887ac14 .7px, transparent .8px) 0 0 / 8px 8px,
+      #edf2f8;
+  }
+  .public-site ::selection { color: #1e3e68; background: #d4e6ff; }
+  .scan-resume { border-color: #d4e0ee; border-radius: 16px; background: var(--paper); box-shadow: 0 18px 65px #254c7d0c, 0 2px 8px #254c7d06; }
+  .scan-header {
+    background: radial-gradient(ellipse at 100% 0, #6187bd88, transparent 60%), linear-gradient(115deg, #142e52, #294d7d);
+    border-bottom: 3px solid #83a9cf;
+  }
+  .scan-header::before, .scan-header::after { content: ''; position: absolute; z-index: -1; pointer-events: none; border-radius: 50%; }
+  .scan-header::before { width: 420px; height: 420px; right: -70px; top: -235px; border: 1px solid #c6e4ff38; box-shadow: 0 0 0 48px #c6e4ff09, 0 0 0 96px #c6e4ff06; }
+  .scan-header::after { width: 230px; height: 230px; right: 65px; top: -130px; border: 1px solid #c6e4ff28; }
+  .resume-watermark { color: #ffffff0e; }
+  .scan-header h1 { color: #f8fbff; }
+  .scan-intro { color: #dfebfa; }
+  .header-caption { color: #bcd8f4; }
+  .mobile-contact { border-top-color: #c9e1ff30; }
+  .mobile-contact a { color: #f3f8ff; }
+  .mobile-contact a > .resume-icon, .contact-arrow { color: #b5d8fa; }
+  .contact-label { color: #c8d9ef; }
+  .mobile-contact a:focus-visible { outline-color: #bcd8f4; }
+  .resume-sidebar { background: linear-gradient(155deg, #edf3fb, #f2f4fc); }
+  .scan-section > h2 > span { padding-left: 12px; background: transparent; border-left: 3px solid var(--highlight); color: var(--ink); font-weight: 600; }
+  .scan-section > h2 > small, .skill-hint, .skill-hint > span { color: var(--muted-ink); }
+  .scan-item-title, .education-heading, .public-site .education-details strong { color: var(--ink); }
+  .resume-intention > p, .scan-teaser, .scan-detail, .scan-about, .education-details, .education-entry > p, .profile-details, .skill-option .scan-item-title { color: var(--body-ink); }
+  .resume-intention > p .resume-icon { color: var(--accent); }
+  .education-entry, .scan-experience .scan-items, .scan-projects .scan-items { border-color: var(--line); }
+  .education-entry::before, .scan-experience .scan-item::before, .scan-projects .scan-item::before { background: var(--accent); box-shadow: 0 0 0 3px var(--paper); }
+  .scan-item > summary > time, .public-site .scan-lead .job-heading time { color: #526e90; }
+  .resume-main .scan-item[open], .resume-main .scan-item > summary:focus-visible { background: var(--wash); }
+  .resume-main .scan-item[open] { box-shadow: inset 0 0 0 1px #dce7f5; }
+  .scan-item > summary:focus-visible { outline-color: var(--accent); }
+  .scan-toggle { background: var(--paper); border-color: #c9d9ee; color: var(--accent); }
+  .scan-item > summary:focus-visible .scan-toggle, .scan-item[open] > summary .scan-toggle { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .scan-keywords { color: #42648b; }
+  .scan-keywords > span { padding: 1px 7px; border-radius: 4px; background: #eaf1fa; }
+  .scan-flow { color: var(--muted-ink); }
+  .scan-flow-arrow { color: #6586ae; }
+  .profile-details dt { background: #fcfdff80; color: var(--accent); border-color: #c9d9ee; }
+  .profile-details a:hover { color: var(--accent-dark); }
+  .skill-gauge { background: conic-gradient(from -90deg, #477fc4, #88c0db var(--proficiency), #d5e1f0 0); }
+  .skill-gauge::before { background: #294e7d; border-color: #edf3fb; }
+  .skill-score { color: #f7fbff; }
+  .skill-option:focus-visible .skill-gauge { outline-color: var(--accent); }
+  .skill-item[open] { background: #fcfdffb3; border-color: #ccdcee; border-radius: 8px; }
+  .public-site .resume-content strong { color: var(--ink); }
+  .public-site .resume-content li::marker { color: #7394bc; }
+  .public-site .resume-content .stack { color: var(--body-ink); border-color: #8aafd6; }
+  .public-site .toolbar, .public-site .toolbar > span { color: var(--ink); }
+  .public-site .toolbar button { color: var(--accent-dark); background: #fcfdffb3; border-color: #cbd9eb; }
+  .public-site .toolbar button:hover { background: #e2ecfa; border-color: #a3bcdb; }
+  .public-site .toolbar .section-link { color: var(--accent-dark); background: transparent; border-color: transparent; }
+  .public-site .toolbar .section-link:hover { background: #e2ecfa; }
+  .public-site .toolbar button:focus-visible { outline-color: var(--accent); }
+  .guestbook { color: var(--body-ink); background: var(--paper); border-color: var(--line); border-radius: 12px; box-shadow: 0 10px 35px #254c7d05; }
+  .guestbook h2, .guestbook h3, .guestbook-message-meta strong { color: var(--ink); }
+  .guestbook textarea { color: var(--ink); background: #f5f8fd; border-color: var(--line); border-radius: 8px; }
+  .guestbook textarea::placeholder { color: var(--muted-ink); }
+  .guestbook textarea:focus-visible { outline-color: #356bac40; border-color: var(--accent); background: var(--paper); }
+  .guestbook .guestbook-submit { background: var(--accent); border-color: var(--accent); }
+  .guestbook .guestbook-submit:hover:not(:disabled) { background: var(--accent-dark); }
+  .guestbook button:focus-visible { outline-color: var(--accent); }
+  .guestbook-list-heading button, .guestbook-state a, .guestbook-more { color: var(--accent); }
+  .guestbook-update { color: var(--accent-dark); background: var(--wash); border-color: var(--line); }
+  .guestbook-conversation, .guestbook-message { border-color: var(--line); }
+  .guestbook-heading > span, .guestbook-compose-footer, .guestbook-message-meta time, .guestbook-state, .public-site .site-footer { color: var(--muted-ink); }
+}
+@media screen and (hover: hover) {
+  .resume-main .scan-item > summary:hover { background: var(--wash); }
+  .resume-main .scan-item > summary:hover .scan-toggle { background: var(--accent); border-color: var(--accent); }
+}
+@media screen and (max-width: 820px) {
+  .scan-resume, .guestbook { border-radius: 0; }
+  .scan-header::before { right: -240px; top: -240px; }
+  .scan-header::after { right: -110px; top: -135px; }
+}

@@ -5,17 +5,23 @@ import type { ResumeDocument } from '../lib/resume'
 import ResumeIcon from './ResumeIcon.vue'
 import ReadingSection from './ReadingSection.vue'
 
-const props = defineProps<{ document: ResumeDocument }>()
+const props = defineProps<{ document: ResumeDocument; expandAll?: boolean }>()
 const model = computed(() => buildReadingResume(props.document))
 const mainSections = computed(() => model.value.sections.filter(section => !['overview', 'skills'].includes(section.kind)))
 const sideSections = computed(() => model.value.sections.filter(section => ['overview', 'skills'].includes(section.kind)))
 const root = ref<HTMLElement>()
 const expanded = ref(new Set<string>())
+const visibleItems = computed(() => props.expandAll
+  ? new Set(model.value.sections.flatMap(section => section.items.map(item => item.id)))
+  : expanded.value)
 function toggled(id: string, event: Event) {
   const next = new Set(expanded.value)
   if ((event.target as HTMLDetailsElement).open) next.add(id)
   else next.delete(id)
   expanded.value = next
+}
+function preventPreviewCollapse(event: MouseEvent) {
+  if (props.expandAll && (event.target as Element).closest('summary')) event.preventDefault()
 }
 async function reveal(id: string) {
   if (!model.value.sections.some(section => section.items.some(item => item.id === id))) return
@@ -27,7 +33,7 @@ defineExpose({ reveal })
 </script>
 
 <template>
-  <main ref="root" class="scan-resume" :aria-label="document.profile.name + '个人简历速览'">
+  <main ref="root" class="scan-resume" :aria-label="document.profile.name + '个人简历速览'" @click.capture="preventPreviewCollapse">
     <header class="scan-header">
       <span class="resume-watermark" aria-hidden="true">Personal resume</span>
       <h1>{{ document.profile.name }}</h1>
@@ -52,7 +58,7 @@ defineExpose({ reveal })
             <div v-if="model.educationDetails" class="resume-content education-details" v-html="model.educationDetails" />
           </div>
         </section>
-        <ReadingSection v-for="section in mainSections" :key="section.id" :section="section" :expanded="expanded" @toggle="toggled" />
+        <ReadingSection v-for="section in mainSections" :key="section.id" :section="section" :expanded="visibleItems" @toggle="toggled" />
       </div>
       <aside class="resume-sidebar" aria-label="个人信息与专业技能">
         <section class="scan-section profile-information" aria-labelledby="profile-information">
@@ -63,7 +69,7 @@ defineExpose({ reveal })
             <div><dt><ResumeIcon name="mail" /><span class="visually-hidden">邮箱</span></dt><dd><a :href="'mailto:' + document.profile.email">{{ document.profile.email }}</a></dd></div>
           </dl>
         </section>
-        <ReadingSection v-for="section in sideSections" :key="section.id" :section="section" :expanded="expanded" :overview-content="model.overviewContent" @toggle="toggled" />
+        <ReadingSection v-for="section in sideSections" :key="section.id" :section="section" :expanded="visibleItems" :overview-content="model.overviewContent" @toggle="toggled" />
       </aside>
     </div>
   </main>

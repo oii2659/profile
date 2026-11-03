@@ -1,0 +1,60 @@
+@media screen {
+  .design-print { padding-bottom: 32px; }
+  .design-print-toolbar { gap: 20px; }
+  .design-print-toolbar > div:first-child { max-width: 620px; }
+  .design-print-toolbar p { margin: 5px 0 0; color: #61738a; font-size: 12px; }
+  .design-print-toolbar a { white-space: nowrap; color: #356bac; }
+  .design-print-toolbar .toolbar-actions { flex-wrap: wrap; gap: 10px; }
+  .design-print-toolbar .export-error { color: #a32929; }
+  .design-print.is-image-export { --resume-reading-font: 'Microsoft YaHei', 'PingFang SC', sans-serif; }
+  .design-print.is-image-export .reading-layout { max-width: none; margin: 0; }
+  .design-print.is-image-export .resume-columns { grid-template-columns: minmax(0, 1fr) 310px; }
+  .design-print.is-image-export .scan-resume { border-radius: 0; box-shadow: none; }
+}
+.design-print summary { pointer-events: none; }
+.design-print .scan-toggle, .design-print .skill-hint { display: none; }
+@media print {
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+  html, body { background: #fff; }
+  .design-print { background: #fff; padding: 0; min-height: 0; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .design-print .toolbar { display: none; }
+  .design-print .reading-layout { max-width: none; margin: 0; }
+  .design-print .scan-resume { display: block; overflow: visible; border: 0; border-radius: 0; box-shadow: none; }
+  .design-print .scan-header { min-height: 0; padding: 19mm 8mm 6mm; break-inside: avoid; }
+  .design-print .resume-watermark { top: -3mm; left: 5mm; font-size: 28mm; }
+  .design-print .scan-header h1 { font-size: 25pt; }
+  .design-print .scan-intro { font-size: 9pt; }
+  .design-print .header-caption { right: 8mm; bottom: 8mm; font-size: 8pt; }
+  .design-print .resume-columns { grid-template-columns: minmax(0, 1fr) 58mm; align-items: stretch; background: linear-gradient(to left, #edf3fb 0 58mm, #fcfdff 58mm); }
+  .design-print .resume-main { padding: 6mm 5mm 0 4mm; }
+  .design-print .resume-sidebar { padding: 7mm 5mm; background: transparent; border-left: 1px solid #dce7f5; }
+  .design-print .scan-section + .scan-section { margin-top: 6mm; }
+  .design-print .scan-section > h2 { margin-bottom: 3mm; font-size: 11pt; break-after: avoid; }
+  .design-print .scan-section > h2 > small { font-size: 7pt; }
+  .design-print .scan-section > h2 > span { padding-top: 2px; padding-bottom: 2px; }
+  .design-print .scan-item-title { font-size: 10pt; line-height: 1.65; }
+  .design-print .scan-detail { font-size: 9pt; line-height: 1.6; }
+  .design-print .resume-content li { margin: 6px 0; }
+  .design-print .resume-content p { margin: 6px 0; }
+  .design-print .resume-sidebar .scan-detail, .design-print .scan-about, .design-print .profile-details { font-size: 8.5pt; line-height: 1.75; }
+  .design-print .resume-intention > p, .design-print .education-entry, .design-print .education-details { font-size: 9pt; }
+  .design-print .education-heading { gap: 3px 8px; }
+  .design-print .resume-content .stack, .design-print .github { font-size: 8pt; }
+  .design-print .skill-item, .design-print .education-entry, .design-print .profile-information { break-inside: avoid; }
+  .design-print .scan-item { break-inside: auto; }
+  .design-print .scan-item > summary { break-after: avoid; break-inside: avoid; }
+  .design-print .scan-detail li { break-inside: avoid; }
+  .design-print .scan-detail p { orphans: 3; widows: 3; }
+  .design-print .scan-lead { break-after: avoid; }
+  .design-print .scan-lead .job-heading { break-inside: avoid; break-after: avoid; }
+  .design-print .skill-options { gap: 4mm; }
+  .design-print .skill-item[open] { padding: 3mm; }
+  .design-print .skill-item[open] .skill-gauge { flex-basis: 12mm; width: 12mm; height: 12mm; }
+  .design-print .skill-item[open] .skill-score { font-size: 11pt; }
+  .design-print .skill-item[open] .scan-item-title { font-size: 9pt; }
+  .design-print .skill-gauge::before { inset: 3px; border-width: 1px; }
+  .design-print .scan-item, .design-print .skill-item { box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+}
