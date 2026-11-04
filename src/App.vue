@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
-import Guestbook from './components/Guestbook.vue'
+import { guestbookEnabled } from './config/features'
 import ResumeView from './components/ResumeView.vue'
 import ReadingResume from './components/ReadingResume.vue'
 import ResumeIcon from './components/ResumeIcon.vue'
@@ -8,6 +8,7 @@ import { publishedResume } from './lib/resume'
 import { recordVisit } from './lib/analytics'
 const AdminApp = defineAsyncComponent(() => import('./admin/AdminApp.vue'))
 const DesignPrint = defineAsyncComponent(() => import('./components/DesignPrint.vue'))
+const Guestbook = defineAsyncComponent(() => import('./components/Guestbook.vue'))
 const isDesignPrint = new URLSearchParams(window.location.search).get('print') === 'design'
 const printDialog = ref<HTMLDialogElement>()
 const adminPath = '/admin'
@@ -66,7 +67,7 @@ function previewDesign() {
   <div v-else class="public-site">
     <nav class="toolbar" aria-label="简历操作">
       <span>{{ publishedResume.profile.name }} · 个人简历</span>
-      <div class="toolbar-actions"><button class="section-link" type="button" @click="scrollToSection('guestbook')"><ResumeIcon name="message" />留言</button><button type="button" @click="printDialog?.showModal()"><ResumeIcon name="download" />打印 / 保存 PDF</button></div>
+      <div class="toolbar-actions"><button v-if="guestbookEnabled" class="section-link" type="button" @click="scrollToSection('guestbook')"><ResumeIcon name="message" />留言</button><button type="button" @click="printDialog?.showModal()"><ResumeIcon name="download" />打印 / 保存 PDF</button></div>
     </nav>
     <dialog ref="printDialog" class="print-dialog" aria-labelledby="print-dialog-title" @click="event => { if (event.target === printDialog) printDialog?.close() }">
       <div class="print-dialog-heading"><h2 id="print-dialog-title">选择打印样式</h2><button type="button" aria-label="关闭打印选项" @click="printDialog?.close()">×</button></div>
@@ -77,7 +78,7 @@ function previewDesign() {
       <div class="reading-column">
         <ReadingResume ref="readingView" :document="publishedResume" />
         <div class="print-resume"><ResumeView :document="publishedResume" /></div>
-        <Guestbook :email="publishedResume.profile.email" />
+        <Guestbook v-if="guestbookEnabled" :email="publishedResume.profile.email" />
       </div>
     </div>
     <footer class="site-footer">

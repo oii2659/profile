@@ -177,8 +177,8 @@ test('reading layout navigates without recording extra visits and fits small scr
   await expect(page.locator('.scan-overview')).not.toContainText('修读课程')
   await expect(page.locator('.scan-overview details')).toHaveCount(0)
   await expect(page.locator('.portrait')).toHaveCount(0)
-  await page.getByRole('navigation', { name: '简历操作' }).getByRole('button', { name: '留言' }).click()
-  await expect(page.locator('#guestbook')).toBeFocused()
+  await expect(page.getByRole('navigation', { name: '简历操作' }).getByRole('button', { name: '留言', exact: true })).toHaveCount(0)
+  await expect(page.locator('#guestbook')).toHaveCount(0)
   expect(state.visits).toHaveLength(1)
   await expect(page).toHaveURL('http://127.0.0.1:5180/')
   for (const width of [900, 768, 390, 320]) {
@@ -194,9 +194,9 @@ test('old public links become clean URLs while admin routing remains available',
   await expect(page).toHaveURL('http://127.0.0.1:5180/')
   await expect(page.locator('#resume-section-2-item-1')).toHaveAttribute('open', '')
   await expect(page.locator('.scan-facts')).toHaveCount(0)
-  await page.getByRole('navigation', { name: '简历操作' }).getByRole('button', { name: '留言' }).click()
+  await page.goto('/#guestbook')
   await expect(page).toHaveURL('http://127.0.0.1:5180/')
-  await expect(page.locator('#guestbook')).toBeFocused()
+  await expect(page.locator('#guestbook')).toHaveCount(0)
   // The public footer no longer exposes the admin link; direct routing stays available.
   await page.goto('/admin')
   await expect(page.getByLabel('管理员邮箱')).toBeVisible()
@@ -226,7 +226,6 @@ test('mobile first visit stays readable with unavailable fonts and desktop keeps
       }
       expect(await page.locator('.scan-teaser').first().evaluate(el => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(15)
       expect((await page.locator('.scan-toggle').first().boundingBox())!.width).toBeGreaterThanOrEqual(44)
-      expect(await page.locator('.guestbook textarea').evaluate(el => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(16)
       const watermark = await page.locator('.resume-watermark').boundingBox()
       const header = await page.locator('.scan-header').boundingBox()
       expect(watermark!.x + watermark!.width).toBeLessThanOrEqual(header!.x + header!.width)
@@ -242,9 +241,12 @@ test('mobile first visit stays readable with unavailable fonts and desktop keeps
 
 test('simple guestbook retains failed drafts, publishes and loads additional comments', async ({ page }) => {
   const state = await setup(page)
+  // Keep the optional feature covered without enabling it on the public site.
+  await page.route('**/src/config/features.ts', route => route.fulfill({ contentType: 'application/javascript', body: 'export const guestbookEnabled = true' }))
   state.messages = Array.from({ length: 10 }, (_, i) => ({ id: i + 1, content: '留言 ' + (i + 1), created_at: '2026-10-30T01:00:00Z', hidden: false }))
   await page.goto('/')
   await expect(page.locator('.guestbook-message')).toHaveCount(8)
+  await expect(page.getByRole('navigation', { name: '简历操作' }).getByRole('button', { name: '留言', exact: true })).toBeVisible()
   await page.getByRole('button', { name: '查看更多留言' }).click()
   await expect(page.locator('.guestbook-message')).toHaveCount(10)
   const draft = page.getByRole('textbox', { name: '你的留言' })
